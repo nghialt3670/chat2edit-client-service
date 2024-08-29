@@ -31,7 +31,7 @@ export default function ImageEditor({
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const canvasWidth = maxWidth - 32;
-  const canvasHeight = maxHeight - 100;
+  const canvasHeight = maxHeight - 91;
 
   useEffect(() => {
     if (!fabricCanvasRef.current) return;
@@ -140,7 +140,7 @@ export default function ImageEditor({
 
   return (
     <div className="size-full flex flex-col p-4 space-y-4">
-      <div className="rounded-md border">
+      <div className="flex flex-row rounded-md border">
         <input
           type="file"
           accept="image/*"
@@ -181,7 +181,7 @@ export default function ImageEditor({
           </Tooltip>
         </TooltipProvider>
       </div>
-      <ScrollArea className="w-full h-fit min-h-80 rounded-md border">
+      <ScrollArea className="w-full h-fit rounded-md border">
         <canvas ref={canvasElementRef}>{isLoading && <Loader2 />}</canvas>
       </ScrollArea>
     </div>

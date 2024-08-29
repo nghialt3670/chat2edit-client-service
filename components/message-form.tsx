@@ -125,7 +125,7 @@ export default function MessageForm({
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Send Message</p>
+              <p>Send message</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

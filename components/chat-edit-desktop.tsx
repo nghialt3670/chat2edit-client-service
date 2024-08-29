@@ -24,12 +24,6 @@ export default function ChatEditDesktop() {
         for (let entry of entries) {
           const newWidth = entry.contentRect.width;
           const newHeight = entry.contentRect.height;
-          console.log(
-            "Resizing stopped. Final width:",
-            newWidth,
-            "Final height:",
-            newHeight,
-          );
           setEditorMaxWidth(newWidth);
           setEditorMaxHeight(newHeight);
         }
@@ -54,12 +48,12 @@ export default function ChatEditDesktop() {
       direction="horizontal"
       className="size-full rounded-md border"
     >
-      <ResizablePanel defaultSize={50} minSize={30}>
+      <ResizablePanel defaultSize={40} minSize={30}>
         <Chat />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel
-        defaultSize={50}
+        defaultSize={60}
         minSize={30}
         className="image-editor-panel"
       >

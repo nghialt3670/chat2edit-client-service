@@ -1,0 +1,1 @@
+export const SHOW_RESPONDING_MESSAGE_DELAY_MS = 500;
