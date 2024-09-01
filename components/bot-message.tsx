@@ -4,6 +4,8 @@ import { AlertCircle, BotMessageSquare } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { nanoid } from "nanoid";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import AttachmentPreview from "./attachment-preview";
+import AttachmentOptions from "./attachment-options";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Message from "@/lib/types/message";
@@ -21,19 +23,17 @@ export default function BotMessage({
       return (
         <>
           <ReactMarkdown>{message.text}</ReactMarkdown>
-          {message.files.length !== 0 && (
+          {message.attachments.length !== 0 && (
             <div className="flex flex-col w-fit mt-4">
-              {message.files.map((file) =>
-                file ? (
-                  <ImageFile
-                    className="w-60 rounded-md"
-                    key={file.name + file.size.toString()}
-                    file={file}
+              {message.attachments.map((att) => (
+                <div key={att.fileId!} className="relative">
+                  <AttachmentOptions
+                    className="absolute top-0 right-0"
+                    attachment={att}
                   />
-                ) : (
-                  <div key={nanoid()}>Error</div>
-                ),
-              )}
+                  <AttachmentPreview className="w-60" attachment={att} />
+                </div>
+              ))}
             </div>
           )}
         </>

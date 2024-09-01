@@ -1,79 +1,70 @@
 "use client";
 
-import { CirclePlus, Loader2, Share, SquarePlus, Trash2 } from "lucide-react";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 import Link from "next/link";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { canvasFileToDataURL, fetchFile, fetchJSON } from "@/lib/utils";
 import { SHOW_RESPONDING_MESSAGE_DELAY_MS } from "@/lib/configs/timer";
 import SendMessageResponse from "@/lib/types/send-message-response";
 import useMessages from "@/lib/hooks/use-messages";
-import { fetchFile, fetchJSON } from "@/lib/utils";
 import ChatStatus from "@/lib/types/chat-status";
+import Attachment from "@/lib/types/attachment";
 import useChats from "@/lib/hooks/use-chats";
+import ChatTask from "@/lib/types/chat-task";
 import { MessageList } from "./message-list";
 import { ChatSelect } from "./chat-select";
+import { TaskSelect } from "./task-select";
 import Message from "@/lib/types/message";
 import MessageForm from "./message-form";
+import DeleteChat from "./delete-chat";
 import IChat from "@/lib/types/chat";
 import ShareChat from "./share-chat";
 import { Button } from "./ui/button";
-import DeleteChat from "./delete-chat";
 
-export default function Chat() {
+export default function Chat({ id }: { id: string | undefined }) {
+  const [chatId, setChatId] = useState<string | undefined>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [chats, setChats] = useState<IChat[]>([]);
   const initMessages = useMessages();
   const initChats = useChats();
-  const [status, setStatus] = useState<ChatStatus>(ChatStatus.Idle);
-  const pathname = usePathname();
+  const [status, setStatus] = useState<ChatStatus>(ChatStatus.Initializing);
+  const [task, setTask] = useState<ChatTask>(ChatTask.ImageEditing);
 
   useEffect(() => {
-    const updateMessages = async () => {
-      const filledMessages: Message[] = await Promise.all(
-        initMessages.map(async (msg) => ({
-          ...msg,
-          files: await Promise.all(
-            msg.fileIds.map(async (id) => await fetchFile(`/api/file/${id}`)),
-          ),
-        })),
-      );
-      console.log(filledMessages);
-      setMessages(filledMessages);
-    };
-    updateMessages();
+    setChatId(id);
+  }, [id]);
+
+  useEffect(() => {
+    setMessages(initMessages);
+    if (initMessages.length % 2 === 0) setStatus(ChatStatus.Idle);
+    else setStatus(ChatStatus.ResponseError);
   }, [initMessages]);
 
   useEffect(() => {
     setChats(initChats);
   }, [initChats]);
 
-  const handleSubmit = async (text: string, files: File[]) => {
-    const reqMessage = { id: nanoid(), text, files };
+  const handleSubmit = async (text: string, attachments: Attachment[]) => {
+    const reqMessage = { id: nanoid(), text, attachments };
     setMessages((prev) => [...prev, reqMessage]);
-    setStatus(ChatStatus.Sending)
+    setStatus(ChatStatus.Sending);
     setTimeout(
       () => setStatus(ChatStatus.Responding),
       SHOW_RESPONDING_MESSAGE_DELAY_MS,
     );
 
     const formData = new FormData();
-    if (pathname.startsWith("/chat/"))
-      formData.set("chatId", pathname.split("/").pop()!);
+    if (chatId) formData.set("chatId", chatId);
+    formData.set("task", task);
     formData.set("text", reqMessage.text);
-    files.forEach((file) => formData.append("files", file!));
+    attachments.forEach((att) => formData.append("files", att.file!));
 
     const result = (await fetchJSON(
       "/api/chat/send-message",
       "POST",
       formData,
     )) as SendMessageResponse | null;
+
     if (!result) {
       setStatus(ChatStatus.RequestError);
       return;
@@ -82,7 +73,8 @@ export default function Chat() {
     const { newChatId, savedRequest, response } = result;
 
     if (newChatId) {
-      history.pushState({}, "", `/chat/${newChatId}`);
+      setChatId(newChatId);
+      history.pushState({}, "", `/${newChatId}`);
       setChats((prev) => [
         ...prev,
         { id: newChatId, title: "", updatedAt: new Date() },
@@ -103,12 +95,22 @@ export default function Chat() {
       return;
     }
 
+    const resAttachments = await Promise.all(
+      response.attachments.map(async (att) => {
+        if (!att.name.endsWith(".canvas")) return att;
+        const file = await fetchFile(`/api/file/${att.fileId}`);
+        if (!file) return att;
+        const dataURL = await canvasFileToDataURL(file);
+        if (!dataURL) return att;
+        att.dataURL = dataURL;
+        return att;
+      }),
+    );
+
     const resMessage = {
       id: nanoid(),
       text: response.text,
-      files: await Promise.all(
-        response.fileIds.map(async (id) => await fetchFile(`/api/file/${id}`)),
-      ),
+      attachments: resAttachments,
     };
 
     setStatus(ChatStatus.Idle);
@@ -119,40 +121,31 @@ export default function Chat() {
     ]);
   };
 
+  const handleTaskChange = (task: ChatTask) => {
+    setTask(task);
+  };
+
   return (
-    <div className="size-full flex flex-col p-4 space-y-4">
+    <div className="size-full flex flex-col space-y-4">
       <div className="flex flex-row rounded-md border border-transparent">
-        <ChatSelect chats={chats} />
-        <Button variant={"ghost"} type="submit">
-          <Link href={"/"}>New chat</Link>
-        </Button>
-        <div className="flex flex-row ml-auto items-center">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <DeleteChat chatId={pathname.split("/").pop()!} />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Delete chat</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size={"icon"} variant={"ghost"} type="submit">
-                  <ShareChat chatId={pathname.split("/").pop()!} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Share chat</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <div className="flex flex-row space-x-2">
+          <TaskSelect onChange={handleTaskChange} />
+          <ChatSelect chats={chats} />
+          <Link href={"/"}>
+            <Button variant={"ghost"} type="submit">
+              New chat
+            </Button>
+          </Link>
         </div>
+        {chatId && (
+          <div className="flex flex-row ml-auto items-center">
+            <DeleteChat chatId={chatId} />
+            <ShareChat chatId={chatId} />
+          </div>
+        )}
       </div>
       <MessageList status={status} messages={messages} />
-      <MessageForm onSubmit={handleSubmit} />
+      <MessageForm status={status} onSubmit={handleSubmit} />
     </div>
   );
 }

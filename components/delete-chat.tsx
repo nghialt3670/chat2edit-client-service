@@ -15,6 +15,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // import useChatHistoryStore from "@/stores/chat-history-store";
 import { Button } from "@/components/ui/button";
@@ -23,7 +29,7 @@ export default function DeleteChat({ chatId }: { chatId: string }) {
   const [isPending, startTransition] = useTransition();
   const [isError, setIsError] = useState<boolean>(false);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
-  // const chatHistoryStore = useChatHistoryStore();
+  const [open, setOpen] = useState<boolean>(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -32,7 +38,7 @@ export default function DeleteChat({ chatId }: { chatId: string }) {
       const response = await fetch(`/api/chat/${chatId}`, { method: "DELETE" });
       if (response.ok) {
         // chatHistoryStore.removeChat(chatId);
-        if (pathname.endsWith(chatId)) router.push("/chat");
+        if (pathname.endsWith(chatId)) router.push("/");
         if (cancelButtonRef.current) cancelButtonRef.current.click();
       } else {
         setIsError(true);
@@ -41,12 +47,23 @@ export default function DeleteChat({ chatId }: { chatId: string }) {
   };
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger className="flex flex-row w-full">
-        <Button size={"icon"} variant={"ghost"}>
-          <Trash2 size={16} />
-        </Button>
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size={"icon"}
+              variant={"ghost"}
+              onClick={() => setOpen(true)}
+            >
+              <Trash2 size={16} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Share chat</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>

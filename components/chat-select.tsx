@@ -26,11 +26,11 @@ export function ChatSelect({ chats }: { chats: Chat[] }) {
   });
 
   return (
-    <Select onValueChange={(chatId) => router.push(`/chat/${chatId}`)}>
+    <Select onValueChange={(chatId) => router.push(`/${chatId}`)}>
       <SelectTrigger className="max-w-40">
         <SelectValue placeholder="Chat history" />
       </SelectTrigger>
-      <SelectContent className="max-w-xl">
+      <SelectContent className="w-full">
         {Object.keys(groupedChats).map((date) => (
           <SelectGroup key={date}>
             <SelectLabel className="flex justify-center items-center">
@@ -39,7 +39,7 @@ export function ChatSelect({ chats }: { chats: Chat[] }) {
             {groupedChats[date].map((chat) => (
               <SelectItem
                 key={chat.id}
-                className="text-nowrap w-full pr-10 overflow-hidden hover:cursor-pointer"
+                className="text-nowrap w-full h-10 pr-10 overflow-hidden hover:cursor-pointer"
                 value={chat.id}
               >
                 <div className="flex items-center w-60 text-nowrap overflow-hidden">

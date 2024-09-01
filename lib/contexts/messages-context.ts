@@ -1,6 +1,6 @@
 import { createContext } from "react";
-import DatalessMessage from "../types/dataless-message";
+import Message from "../types/message";
 
-const MessagesContext = createContext<DatalessMessage[] | undefined>(undefined);
+const MessagesContext = createContext<Message[] | undefined>(undefined);
 
 export default MessagesContext;

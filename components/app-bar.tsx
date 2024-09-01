@@ -21,8 +21,8 @@ export default function AppBar() {
       <div className="flex flex-row h-full ml-auto items-center space-x-2 mr-2">
         <ThemeSelect className="size-fit p-1" />
         {session.status === "unauthenticated" && (
-          <Button size={"icon"} variant={"ghost"}>
-            <LogIn size={20} onClick={() => signIn()} />
+          <Button size={"icon"} variant={"ghost"} onClick={() => signIn()}>
+            <LogIn size={20} />
           </Button>
         )}
         {session.status === "loading" && <Skeleton className="size-6" />}

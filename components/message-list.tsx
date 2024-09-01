@@ -1,5 +1,7 @@
 "use client";
 
+import { CircularProgress, LinearProgress } from "@mui/material";
+import { useEffect, useRef } from "react";
 import { nanoid } from "nanoid";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatStatus from "@/lib/types/chat-status";
@@ -16,6 +18,12 @@ export function MessageList({
 }) {
   const prevMessages = messages.slice(0, messages.length - 1);
   const lastMessage = messages[messages.length - 1];
+  const scrollRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollIntoView(false);
+  }, [status, messages]);
 
   const renderLastMessage = () => {
     if (!lastMessage) return undefined;
@@ -31,23 +39,27 @@ export function MessageList({
   };
 
   return (
-    <ScrollArea className="size-full rounded-md border">
-      <ul className="p-4 space-y-6">
-        {prevMessages.map((msg, idx) =>
-          idx % 2 === 0 ? (
-            <UserMessage key={msg.id} message={msg} />
-          ) : (
-            <BotMessage key={msg.id} message={msg} />
-          ),
-        )}
-        {renderLastMessage()}
-        {status === ChatStatus.Responding && (
-          <BotMessage key={nanoid()} message={undefined} />
-        )}
-        {status === ChatStatus.ResponseError && (
-          <BotMessage key={nanoid()} message={null} />
-        )}
-      </ul>
+    <ScrollArea className="size-full rounded-md border min-w-80">
+      {status === ChatStatus.Initializing ? (
+        <LinearProgress color={"inherit"} />
+      ) : (
+        <ul ref={scrollRef} className="p-4 space-y-6">
+          {prevMessages.map((msg, idx) =>
+            idx % 2 === 0 ? (
+              <UserMessage key={msg.id} message={msg} />
+            ) : (
+              <BotMessage key={msg.id} message={msg} />
+            ),
+          )}
+          {renderLastMessage()}
+          {status === ChatStatus.Responding && (
+            <BotMessage key={nanoid()} message={undefined} />
+          )}
+          {status === ChatStatus.ResponseError && (
+            <BotMessage key={nanoid()} message={null} />
+          )}
+        </ul>
+      )}
     </ScrollArea>
   );
 }

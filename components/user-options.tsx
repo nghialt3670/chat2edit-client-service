@@ -3,6 +3,7 @@
 import { CreditCard, LogOut, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { ComponentProps } from "react";
+import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,12 +23,12 @@ export default function UserOptions({ className }: ComponentProps<"img">) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         {session?.user?.image ? (
-          <img
+          <Image
             className={cn("rounded-md size-6 hover:cursor-pointer", className)}
             src={session.user.image}
             alt=""
-            crossOrigin={"anonymous"}
-            referrerPolicy={"no-referrer"}
+            width={10}
+            height={10}
           />
         ) : (
           <User />
@@ -57,7 +58,7 @@ export default function UserOptions({ className }: ComponentProps<"img">) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="hover:cursor-pointer"
-          onClick={() => signOut()}
+          onClick={() => signOut({ callbackUrl: "/" })}
         >
           <LogOut className="mr-2 size-4" />
           <span>Log out</span>

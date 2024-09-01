@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import { GRIDFS_FOR_MESSAGE_FILES_BUCKET_NAME } from "@/lib/configs/db";
 import connectToDatabase from "@/lib/mongo";
+import { logError } from "@/lib/utils";
 
 export async function GET(
   req: NextRequest,
@@ -38,7 +39,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error(error instanceof Error ? error.message : error);
+    logError(error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 },

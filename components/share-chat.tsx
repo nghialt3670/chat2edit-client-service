@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-
 import { AlertCircle, Forward, Trash2 } from "lucide-react";
-
+import { useEffect, useState, useTransition } from "react";
+import { usePathname } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,8 +13,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { fetchJSON } from "@/lib/utils";
 
 export default function ShareChat({ chatId }: { chatId: string }) {
   const [shareLink, setShareLink] = useState<string>();
@@ -24,19 +30,17 @@ export default function ShareChat({ chatId }: { chatId: string }) {
   const [isDeleteError, setIsDeleteError] = useState<boolean>();
   const [isCreating, startCreating] = useTransition();
   const [isDeleting, startDeleting] = useTransition();
+  const pathname = usePathname();
+
+  const endpoint = `/api/chat/${chatId}/share-id`;
 
   useEffect(() => {
     const updateShareLink = async () => {
+      if (!pathname.startsWith("/chat/")) return;
       if (shareLink) return;
-      try {
-        const response = await fetch(`/api/chat/${chatId}/shareId`);
-        if (!response.ok) return;
-        const shareId = await response.json();
-        if (!shareId) return;
-        setShareLink(`${window.location.origin}/share/chat/${shareId}`);
-      } catch (error) {
-        console.error(error instanceof Error ? error.message : error);
-      }
+      const shareId = await fetchJSON(endpoint);
+      if (!shareId) return;
+      setShareLink(`${window.location.origin}/share/chat/${shareId}`);
     };
     updateShareLink();
   }, [chatId]);
@@ -49,42 +53,42 @@ export default function ShareChat({ chatId }: { chatId: string }) {
 
   const handleCreateClick = async () => {
     startCreating(async () => {
-      try {
-        const response = await fetch(`/api/chat/${chatId}/shareId`, {
-          method: "POST",
-        });
-        if (!response.ok) throw new Error("Error while creating share ID");
-        const { shareId } = await response.json();
-        setShareLink(`${window.location.origin}/share/chat/${shareId}`);
-      } catch (error) {
-        console.error(error instanceof Error ? error.message : error);
+      const shareId = await fetchJSON(endpoint, "POST");
+      if (!shareId) {
         setIsCreateError(true);
+        return;
       }
+      setShareLink(`${window.location.origin}/share/chat/${shareId}`);
     });
   };
 
   const handleDeleteClick = async () => {
     startDeleting(async () => {
-      try {
-        const response = await fetch(`/api/chat/${chatId}/shareId`, {
-          method: "POST",
-        });
-        if (!response.ok) throw new Error("Error while deleting share ID");
-        setShareLink(undefined);
-      } catch (error) {
-        console.error(error instanceof Error ? error.message : error);
-        setIsDeleteError(true);
-      }
+      if (await fetchJSON(endpoint, "DELETE")) setShareLink(undefined);
+      else setIsDeleteError(true);
     });
   };
 
+  const [open, setOpen] = useState(false);
+
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button size={"icon"} variant={"ghost"}>
-          <Forward />
-        </Button>
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size={"icon"}
+              variant={"ghost"}
+              onClick={() => setOpen(true)}
+            >
+              <Forward />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Share chat</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <AlertDialogContent className="flex flex-col">
         <AlertDialogHeader>
           <AlertDialogTitle>Share this chat</AlertDialogTitle>

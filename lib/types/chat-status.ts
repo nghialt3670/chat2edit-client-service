@@ -1,4 +1,5 @@
 enum ChatStatus {
+  Initializing = "initializing",
   Idle = "idle",
   Sending = "sending",
   Responding = "responding",

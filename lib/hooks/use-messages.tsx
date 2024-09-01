@@ -2,13 +2,13 @@
 
 import { ReactNode, useContext } from "react";
 import MessagesContext from "../contexts/messages-context";
-import DatalessMessage from "../types/dataless-message";
+import Message from "../types/message";
 
 export function MessagesProvider({
   messages,
   children,
 }: {
-  messages: DatalessMessage[];
+  messages: Message[];
   children: ReactNode;
 }) {
   return (

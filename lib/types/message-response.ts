@@ -1,4 +1,6 @@
+import Attachment from "./attachment";
+
 export default interface MessageResponse {
   text: string;
-  fileIds: string[];
+  attachments: Attachment[];
 }

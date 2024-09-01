@@ -1,5 +1,7 @@
+import Attachment from "./attachment";
+
 export default interface Message {
   id: string;
   text: string;
-  files: (File | null)[];
+  attachments: Attachment[];
 }

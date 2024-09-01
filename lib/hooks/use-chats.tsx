@@ -19,7 +19,7 @@ export function ChatsProvider({
 export default function useChats() {
   const context = useContext(ChatsContext);
   if (context === undefined)
-    throw new Error("useMessages must be used within a MessagesProvider");
+    throw new Error("useChats must be used within a ChatsProvider");
 
   return context;
 }
