@@ -2,23 +2,14 @@
 
 import { Canvas as FabricCanvas, FabricImage, FabricObject } from "fabric";
 import { useEffect, useRef, useState } from "react";
-import { LinearProgress } from "@mui/material";
 import { Download, Upload } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import getFileFromAttachment, {
-  cn,
-  readFileAsDataURL,
-  readFileAsText,
-} from "@/lib/utils";
+import { LinearProgress } from "@mui/material";
 import { EDITOR_RESIZE_UPDATE_DELAY_MS } from "@/lib/configs/timer";
+import { cn, readFileAsDataURL, readFileAsText } from "@/lib/utils";
 import useEditAttachment from "@/lib/hooks/use-edit-attachment";
+import TooltipIconButton from "./tooltip-icon-button";
 import { ScrollArea } from "./ui/scroll-area";
-import { Button } from "./ui/button";
+import { getFile } from "@/lib/localforage";
 
 export default function ImageEditor() {
   const canvasElementRef = useRef<HTMLCanvasElement>(null);
@@ -36,7 +27,7 @@ export default function ImageEditor() {
   useEffect(() => {
     const updateFile = async () => {
       if (!editAttachment) return;
-      const file = await getFileFromAttachment(editAttachment);
+      const file = await getFile(editAttachment);
       setFile(file);
     };
     setIsInitializing(true);
@@ -182,38 +173,16 @@ export default function ImageEditor() {
           ref={fileInputRef}
           hidden
         />
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                size={"icon"}
-                variant={"ghost"}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Upload />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Upload</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                size={"icon"}
-                variant={"ghost"}
-                onClick={handleDownloadClick}
-              >
-                <Download />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Download</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <TooltipIconButton
+          icon={<Upload />}
+          text="Upload image"
+          onClick={() => fileInputRef.current?.click()}
+        />
+        <TooltipIconButton
+          icon={<Download />}
+          text="Download image"
+          onClick={handleDownloadClick}
+        />
       </div>
       <ScrollArea
         id="editor-panel"
@@ -224,7 +193,7 @@ export default function ImageEditor() {
       >
         <canvas ref={canvasElementRef}></canvas>
         {isInitializing && (
-          <LinearProgress color={"inherit"} className="absolute bottom-0" />
+          <LinearProgress color={"inherit"} style={{position: "absolute", top: 0}} />
         )}
       </ScrollArea>
     </div>

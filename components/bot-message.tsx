@@ -2,14 +2,12 @@
 
 import { AlertCircle, BotMessageSquare } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import { nanoid } from "nanoid";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import AttachmentPreview from "./attachment-preview";
 import AttachmentOptions from "./attachment-options";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Message from "@/lib/types/message";
-import ImageFile from "./image-file";
 
 export default function BotMessage({
   message,

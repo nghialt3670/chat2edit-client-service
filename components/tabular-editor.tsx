@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+"use client";
+
 import { saveAs } from "file-saver";
+import { useState } from "react";
 import Papa from "papaparse";
 
 export function TabularEditor() {

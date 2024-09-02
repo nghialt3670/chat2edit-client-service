@@ -1,6 +1,10 @@
 "client only";
 
 import { Canvas, FabricImage } from "fabric";
+import {
+  CANVAS_DATA_URL_QUALITY,
+  IMAGE_DATA_URL_EXPORT_FORMAT,
+} from "./configs/file";
 import { readFileAsDataURL, readFileAsText } from "./utils";
 
 export async function initCanvasFromFile(file: File): Promise<Canvas> {
@@ -28,4 +32,15 @@ export function resizeCanvas(canvas: Canvas): void {
     canvas.setWidth(canvas.backgroundImage.getScaledWidth());
     canvas.setHeight(canvas.backgroundImage.getScaledHeight());
   }
+}
+
+export async function canvasFileToDataURL(file: File): Promise<string | null> {
+  const canvas = await createCanvasFromFile(file);
+  return canvas
+    ? canvas.toDataURL({
+        format: IMAGE_DATA_URL_EXPORT_FORMAT,
+        quality: CANVAS_DATA_URL_QUALITY,
+        multiplier: 1,
+      })
+    : null;
 }

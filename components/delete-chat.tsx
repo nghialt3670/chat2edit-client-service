@@ -1,10 +1,8 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-
 import { AlertCircle, Trash2 } from "lucide-react";
-
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -13,32 +11,30 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-// import useChatHistoryStore from "@/stores/chat-history-store";
+import TooltipIconButton from "./tooltip-icon-button";
 import { Button } from "@/components/ui/button";
+import useChats from "@/lib/hooks/use-chats";
+import useChat from "@/lib/hooks/use-chat";
 
-export default function DeleteChat({ chatId }: { chatId: string }) {
+export default function DeleteChat() {
   const [isPending, startTransition] = useTransition();
   const [isError, setIsError] = useState<boolean>(false);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const pathname = usePathname();
   const router = useRouter();
+  const { removeChat } = useChats();
+  const { chatId } = useChat();
+
+  if (!chatId) return undefined;
 
   const handleDelete = async () => {
     startTransition(async () => {
       const response = await fetch(`/api/chat/${chatId}`, { method: "DELETE" });
       if (response.ok) {
-        // chatHistoryStore.removeChat(chatId);
-        if (pathname.endsWith(chatId)) router.push("/");
+        router.push("/");
+        removeChat(chatId);
         if (cancelButtonRef.current) cancelButtonRef.current.click();
       } else {
         setIsError(true);
@@ -48,22 +44,11 @@ export default function DeleteChat({ chatId }: { chatId: string }) {
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              size={"icon"}
-              variant={"ghost"}
-              onClick={() => setOpen(true)}
-            >
-              <Trash2 size={16} />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Share chat</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <TooltipIconButton
+        icon={<Trash2 size={16} />}
+        text="Delete chat"
+        onClick={() => setOpen(true)}
+      />
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>

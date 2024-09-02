@@ -1,8 +1,7 @@
 "use client";
 
 import { AlertCircle, Forward, Trash2 } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
-import { usePathname } from "next/navigation";
+import { useState, useTransition } from "react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -11,84 +10,59 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import TooltipIconButton from "./tooltip-icon-button";
 import { Button } from "@/components/ui/button";
+import useChat from "@/lib/hooks/use-chat";
 import { fetchJSON } from "@/lib/utils";
 
-export default function ShareChat({ chatId }: { chatId: string }) {
-  const [shareLink, setShareLink] = useState<string>();
+export default function ShareChat() {
+  const [open, setOpen] = useState<boolean>(false);
   const [isCopied, setIsCopied] = useState<boolean>();
   const [isCreateError, setIsCreateError] = useState<boolean>();
   const [isDeleteError, setIsDeleteError] = useState<boolean>();
   const [isCreating, startCreating] = useTransition();
   const [isDeleting, startDeleting] = useTransition();
-  const pathname = usePathname();
+  const { chatId, shareId, setShareId } = useChat();
+
+  if (!chatId) return undefined;
 
   const endpoint = `/api/chat/${chatId}/share-id`;
 
-  useEffect(() => {
-    const updateShareLink = async () => {
-      if (!pathname.startsWith("/chat/")) return;
-      if (shareLink) return;
-      const shareId = await fetchJSON(endpoint);
-      if (!shareId) return;
-      setShareLink(`${window.location.origin}/share/chat/${shareId}`);
-    };
-    updateShareLink();
-  }, [chatId]);
-
   const handleCopyClick = async () => {
-    if (!shareLink) return;
+    if (!shareId) return;
+    const shareLink = `${window.location.origin}/share/chat/${shareId}`;
     await navigator.clipboard.writeText(shareLink);
     setIsCopied(true);
   };
 
   const handleCreateClick = async () => {
     startCreating(async () => {
-      const shareId = await fetchJSON(endpoint, "POST");
-      if (!shareId) {
-        setIsCreateError(true);
-        return;
-      }
-      setShareLink(`${window.location.origin}/share/chat/${shareId}`);
+      const shareId = (await fetchJSON(endpoint, "POST")) as string;
+      shareId ? setShareId(shareId) : setIsCreateError(true);
     });
   };
 
   const handleDeleteClick = async () => {
     startDeleting(async () => {
-      if (await fetchJSON(endpoint, "DELETE")) setShareLink(undefined);
-      else setIsDeleteError(true);
+      (await fetchJSON(endpoint, "DELETE"))
+        ? setShareId(undefined)
+        : setIsDeleteError(true);
     });
   };
 
-  const [open, setOpen] = useState(false);
+  const shareLink = shareId
+    ? `${window.location.origin}/share/chat/${shareId}`
+    : undefined;
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              size={"icon"}
-              variant={"ghost"}
-              onClick={() => setOpen(true)}
-            >
-              <Forward />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Share chat</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <TooltipIconButton
+        icon={<Forward />}
+        text="Share chat"
+        onClick={() => setOpen(true)}
+      />
       <AlertDialogContent className="flex flex-col">
         <AlertDialogHeader>
           <AlertDialogTitle>Share this chat</AlertDialogTitle>

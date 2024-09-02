@@ -1,6 +1,6 @@
 "use client";
 
-import { CircularProgress, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { nanoid } from "nanoid";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -16,8 +16,6 @@ export function MessageList({
   status: ChatStatus;
   messages: Message[];
 }) {
-  const prevMessages = messages.slice(0, messages.length - 1);
-  const lastMessage = messages[messages.length - 1];
   const scrollRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -25,33 +23,19 @@ export function MessageList({
     scrollRef.current.scrollIntoView(false);
   }, [status, messages]);
 
-  const renderLastMessage = () => {
-    if (!lastMessage) return undefined;
-    if (status === ChatStatus.Idle)
-      return <BotMessage key={lastMessage.id} message={lastMessage} />;
-    return (
-      <UserMessage
-        key={lastMessage.id}
-        message={lastMessage}
-        isError={status === ChatStatus.RequestError}
-      />
-    );
-  };
-
   return (
     <ScrollArea className="size-full rounded-md border min-w-80">
       {status === ChatStatus.Initializing ? (
         <LinearProgress color={"inherit"} />
       ) : (
         <ul ref={scrollRef} className="p-4 space-y-6">
-          {prevMessages.map((msg, idx) =>
+          {messages.map((msg, idx) =>
             idx % 2 === 0 ? (
               <UserMessage key={msg.id} message={msg} />
             ) : (
               <BotMessage key={msg.id} message={msg} />
             ),
           )}
-          {renderLastMessage()}
           {status === ChatStatus.Responding && (
             <BotMessage key={nanoid()} message={undefined} />
           )}

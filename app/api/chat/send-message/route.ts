@@ -3,60 +3,43 @@ import mongoose from "mongoose";
 import sharp from "sharp";
 import JSZip from "jszip";
 import { GRIDFS_FOR_MESSAGE_FILES_BUCKET_NAME } from "@/lib/configs/db";
-import SendMessageResponse from "@/lib/types/send-message-response";
 import { logError, parseZipComment } from "@/lib/utils";
-import EditProvider from "@/lib/types/edit-provider";
+import SendResponse from "@/lib/types/send-response";
+import { formDataSchema } from "@/lib/configs/form";
 import { uploadToGridFS } from "@/lib/gridfs";
-import ChatTask from "@/lib/types/chat-task";
-import Language from "@/lib/types/language";
 import connectToMongoDB from "@/lib/mongo";
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 
-function taskToProvider(task: ChatTask) {
-  switch (task) {
-    case ChatTask.ImageEditing:
-      return EditProvider.Fabric;
-    default:
-      throw new Error("Unsupported task");
-  }
-}
-
-function taskToPrismaTask(task: ChatTask): "IMAGE_EDITING" {
-  switch (task) {
-    case ChatTask.ImageEditing:
-      return "IMAGE_EDITING";
-    default:
-      throw new Error("Unsupported task");
-  }
-}
-
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
-  const chatId = formData.get("chatId") as string | undefined;
-  const text = formData.get("text") as string | undefined;
-  const files = (formData.getAll("files") as File[]) || [];
-  const task = formData.get("task") as ChatTask | undefined;
-  const language = formData.get("lang") as Language | undefined;
-  const bucketName = GRIDFS_FOR_MESSAGE_FILES_BUCKET_NAME;
 
-  let response: SendMessageResponse = { savedRequest: false };
+  const rawFormData = {
+    chatId: formData.get("chatId"),
+    text: formData.get("text"),
+    files: formData.getAll("files"),
+    provider: formData.get("provider"),
+    language: formData.get("language"),
+  };
+
+  const parsedFormData = formDataSchema.safeParse(rawFormData);
+
+  if (!parsedFormData.success) {
+    console.log(parsedFormData.error.errors.map((e) => e.message));
+    return NextResponse.json(
+      { error: parsedFormData.error.errors.map((e) => e.message) },
+      { status: 400 },
+    );
+  }
+
+  const { chatId, text, files, provider, language } = parsedFormData.data;
+  const bucketName = GRIDFS_FOR_MESSAGE_FILES_BUCKET_NAME;
+  let response: SendResponse;
 
   try {
     await connectToMongoDB();
     const db = mongoose.connection.db;
     if (!db) throw new Error("Error connect to MongoDB");
-
-    if (!text) throw new Error("Text is required");
-    if (!(typeof text !== "string")) throw new Error("Text must be string");
-    if (!task) throw new Error("Task is required");
-    if (!(task in ChatTask)) throw new Error(`Task "${task}" is invalid`);
-    if (!language) throw new Error("Language is required");
-    if (!(language in Language))
-      throw new Error(`Language "${language}" is invalid`);
-
-    const provider = taskToProvider(task);
-    formData.set("provider", provider);
 
     const session = await auth();
     const accountId = session?.user?.id;
@@ -64,20 +47,18 @@ export async function POST(req: NextRequest) {
 
     let chat;
     if (chatId) {
-      chat = await prisma.chat.findFirstOrThrow({
-        where: { id: chatId, accountId },
+      chat = await prisma.chat.findUniqueOrThrow({
+        where: { id: chatId },
       });
+      if (chat.provider !== provider) throw new Error("Providers mismatch");
+      if (chat.language !== language) throw new Error("Languages mismatch");
+      if (chat.accountId !== accountId) throw new Error("Unauthorized");
+      if (chat.isError) throw new Error("Chat error not resolved");
     } else {
       chat = await prisma.chat.create({
-        data: { accountId, task, language, isError: true },
+        data: { accountId, provider, language },
       });
-      response.newChatId = chat.id;
     }
-
-    if (chat.isError)
-      throw new Error(
-        "Cannot send a new message before resolving the current chat error",
-      );
 
     const reqMessage = await prisma.message.create({
       data: { chatId: chat.id, text },
@@ -114,7 +95,10 @@ export async function POST(req: NextRequest) {
       }),
     );
 
-    response.savedRequest = true;
+    response = {
+      currChat: chat,
+      savedReqMessage: true,
+    };
 
     const chatEndpoint = `${process.env.CHAT_SERVICE_BASE_URL}/api/v2/chat/${chat.id}`;
     const chatResponse = await fetch(chatEndpoint, {
@@ -122,7 +106,13 @@ export async function POST(req: NextRequest) {
       body: formData,
     });
 
-    if (!chatResponse.ok) throw new Error("Chat service error");
+    if (!chatResponse.ok) {
+      await prisma.chat.update({
+        where: { id: chat.id },
+        data: { isError: true },
+      });
+      throw new Error("Chat service error");
+    }
 
     const blob = await chatResponse.arrayBuffer();
     const zip = await JSZip.loadAsync(blob);
@@ -176,28 +166,19 @@ export async function POST(req: NextRequest) {
       throw new Error("Error while create response attachments");
     }
 
-    response.response = {
-      text: resMessage.text,
-      attachments: resAttachments.map((att) => ({
-        type: att.type,
-        name: att.name,
-        size: att.size,
-        fileId: att.fileId,
-        width: att.width ?? undefined,
-        height: att.height ?? undefined,
-      })),
-    };
+    response.resMessage = { ...resMessage, attachments: resAttachments };
 
     const title = resMessage ? resMessage.text : reqMessage.text;
     const lastMessageId = resMessage ? resMessage.id : reqMessage.id;
 
-    await prisma.chat.update({
+    response.currChat = await prisma.chat.update({
       where: { id: chat.id },
       data: { title, lastMessageId, isError: false },
+      omit: { accountId: true, lastMessageId: true },
     });
   } catch (error) {
     logError(error);
   } finally {
-    return NextResponse.json(response);
+    return NextResponse.json(response!);
   }
 }

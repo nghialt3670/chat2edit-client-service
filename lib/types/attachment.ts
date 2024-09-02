@@ -1,11 +1,7 @@
-export default interface Attachment {
-  type: string;
-  name: string;
-  size: number;
-  width?: number;
-  height?: number;
+import { Attachment as AttachmentModel } from "@prisma/client";
+
+export default interface Attachment
+  extends Omit<AttachmentModel, "id" | "accountId" | "messageId"> {
   dataURL?: string;
-  fileId?: string;
-  imageId?: string;
   file?: File;
 }

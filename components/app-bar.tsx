@@ -18,14 +18,14 @@ export default function AppBar() {
       <Link className="ml-6 font-extrabold text-xl" href={"/"}>
         Chat2Edit
       </Link>
-      <div className="flex flex-row h-full ml-auto items-center space-x-2 mr-2">
-        <ThemeSelect className="size-fit p-1" />
+      <div className="flex flex-row h-full w-fit ml-auto items-center">
+        <ThemeSelect />
         {session.status === "unauthenticated" && (
           <Button size={"icon"} variant={"ghost"} onClick={() => signIn()}>
             <LogIn size={20} />
           </Button>
         )}
-        {session.status === "loading" && <Skeleton className="size-6" />}
+        {session.status === "loading" && <Skeleton className="size-10" />}
         {session.status === "authenticated" && <UserOptions />}
       </div>
     </header>

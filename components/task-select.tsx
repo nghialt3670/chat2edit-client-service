@@ -1,34 +1,33 @@
-import { useRouter } from "next/navigation";
-import { format } from "date-fns";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import ChatTask from "@/lib/types/chat-task";
-import Chat from "@/lib/types/chat";
+"use client";
+
+import { Select, SelectContent, SelectItem } from "@/components/ui/select";
+import ButtonSelectTrigger from "./button-select-trigger";
+import { TASK_TO_ICON } from "@/lib/configs/provider";
+import TooltipIconButton from "./tooltip-icon-button";
+import { ButtonProps } from "@/components/ui/button";
+import Task from "@/lib/types/task";
+import { cn } from "@/lib/utils";
 
 export function TaskSelect({
-  onChange,
-}: {
-  onChange: (task: ChatTask) => void;
+  className,
+  task,
+  onTaskChange,
+}: ButtonProps & {
+  task: Task;
+  onTaskChange: (task: Task) => void;
 }) {
   return (
-    <Select onValueChange={onChange} defaultValue={ChatTask.ImageEditing}>
-      <SelectTrigger className="max-w-40">
-        <SelectValue placeholder="Chat history" />
-      </SelectTrigger>
+    <Select value={task} onValueChange={onTaskChange}>
+      <ButtonSelectTrigger className={cn(className)}>
+        <TooltipIconButton icon={TASK_TO_ICON[task]} text="Select task" />
+      </ButtonSelectTrigger>
       <SelectContent className="w-full">
-        <SelectItem value={ChatTask.ImageEditing}>
+        <SelectItem value={Task.ImageEditing}>
           <span className="truncate">Image editing</span>
         </SelectItem>
-        {/* <SelectItem value="tabular-editor">
-          <span className="truncate">Tabular editor</span>
-        </SelectItem> */}
+        <SelectItem value={Task.SheetEditing}>
+          <span className="truncate">Sheet editing</span>
+        </SelectItem>
       </SelectContent>
     </Select>
   );

@@ -17,9 +17,12 @@ const useAttachment = create<AttachmentStore>((set) => ({
     })),
   removeAttachment: (attachmentToRemove) =>
     set((state) => ({
-      attachments: state.attachments.filter(
-        (attachment) => attachment.fileId !== attachmentToRemove.fileId,
-      ),
+      attachments: state.attachments.filter((attachment) => {
+        if (attachment.fileId && attachmentToRemove.fileId)
+          return attachment.fileId !== attachmentToRemove.fileId;
+
+        return attachment.name !== attachmentToRemove.name;
+      }),
     })),
 }));
 

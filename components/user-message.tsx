@@ -1,20 +1,11 @@
 "use client";
 
 import ReactMarkdown from "react-markdown";
-import { nanoid } from "nanoid";
-import Image from "next/image";
 import AttachmentPreview from "./attachment-preview";
 import AttachmentOptions from "./attachment-options";
 import Message from "@/lib/types/message";
-import ImageFile from "./image-file";
 
-export default function UserMessage({
-  message,
-  isError,
-}: {
-  message: Message;
-  isError?: boolean;
-}) {
+export default function UserMessage({ message }: { message: Message }) {
   const renderImages = () => {
     if (message.attachments)
       return message.attachments.map((att) => (

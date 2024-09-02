@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "./ui/button";
 import Settings from "./settings";
 import { cn } from "@/lib/utils";
 
@@ -22,19 +23,24 @@ export default function UserOptions({ className }: ComponentProps<"img">) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        {session?.user?.image ? (
-          <Image
-            className={cn("rounded-md size-6 hover:cursor-pointer", className)}
-            src={session.user.image}
-            alt=""
-            width={10}
-            height={10}
-          />
-        ) : (
-          <User />
-        )}
+        <Button size={"icon"} variant={"ghost"}>
+          {session?.user?.image ? (
+            <Image
+              className={cn(
+                "rounded-md size-6 hover:cursor-pointer",
+                className,
+              )}
+              src={session.user.image}
+              alt=""
+              width={10}
+              height={10}
+            />
+          ) : (
+            <User />
+          )}
+        </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-fit min-w-40 mr-4">
+      <DropdownMenuContent className="w-fit min-w-40 mr-3">
         <DropdownMenuLabel>
           {session?.user?.email || "My Account"}
         </DropdownMenuLabel>
