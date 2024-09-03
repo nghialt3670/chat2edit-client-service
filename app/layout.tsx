@@ -1,11 +1,12 @@
 import { Inter as FontSans } from "next/font/google";
 import type { Metadata } from "next";
 import { ReactNode } from "react";
-import { ChatProvider } from "@/lib/hooks/use-chat";
 import { Providers } from "@/components/providers";
 import Chat2Edit from "@/components/chat2edit";
 import AppBar from "@/components/app-bar";
+import prisma from "@/lib/prisma";
 import { cn } from "@/lib/utils";
+import { auth } from "@/auth";
 import "./globals.css";
 
 const fontSans = FontSans({
@@ -27,6 +28,19 @@ export default async function RootLayout({
   chat: ReactNode;
   edit: ReactNode;
 }>) {
+  const session = await auth();
+
+  const chats = session?.user?.id
+    ? await prisma.chat.findMany({
+        where: {
+          accountId: session?.user?.id,
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+      })
+    : [];
+
   return (
     <html lang="en">
       <body
@@ -37,15 +51,14 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <Providers
+          chats={chats}
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
           <AppBar />
-          <ChatProvider>
-            <Chat2Edit chat={chat} edit={edit} />
-          </ChatProvider>
+          <Chat2Edit chat={chat} edit={edit} />
         </Providers>
       </body>
     </html>

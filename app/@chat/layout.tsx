@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import { ReactNode } from "react";
-import { ChatsProvider } from "@/lib/hooks/use-chats";
-import prisma from "@/lib/prisma";
-import { auth } from "@/auth";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,22 +11,5 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const session = await auth();
-
-  const chats = session?.user?.id
-    ? await prisma.chat.findMany({
-        where: {
-          accountId: session?.user?.id,
-        },
-        orderBy: {
-          updatedAt: "desc",
-        },
-      })
-    : [];
-
-  return (
-    <ChatsProvider chats={chats}>
-      <main className="size-full">{children}</main>
-    </ChatsProvider>
-  );
+  return <main className="size-full">{children}</main>;
 }
