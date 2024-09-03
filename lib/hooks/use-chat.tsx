@@ -2,24 +2,20 @@
 
 import { ReactNode, useContext, useEffect, useState } from "react";
 import { Language } from "@prisma/client";
-import ChatContext, { ChatContextType } from "../contexts/chat-context";
 import { PROVIDER_TO_TASK } from "../configs/provider";
+import ChatContext from "../contexts/chat-context";
 import ChatStatus from "../types/chat-status";
 import Message from "../types/message";
 import Task from "../types/task";
+import Chat from "../types/chat";
 
 export function ChatProvider({
-  value,
+  chat,
   children,
 }: {
-  value: ChatContextType;
+  chat?: Required<Pick<Chat, "messages">> & Omit<Chat, "messages">;
   children: ReactNode;
 }) {
-  return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
-}
-
-export default function useChat() {
-  const contextChat = useContext(ChatContext);
   const [chatId, setChatId] = useState<string>();
   const [shareId, setShareId] = useState<string>();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -28,39 +24,57 @@ export default function useChat() {
   const [status, setStatus] = useState<ChatStatus>(ChatStatus.Initializing);
 
   useEffect(() => {
-    if (!contextChat) {
-      setStatus(ChatStatus.Idle);
-    } else {
-      if (contextChat.id === chatId) return;
-      setChatId(contextChat.id);
-      setShareId(contextChat.shareId ?? undefined);
-      setMessages(contextChat.messages);
-      setTask(PROVIDER_TO_TASK[contextChat.provider]);
-      setLanguage(contextChat.language);
-      if (contextChat.messages.length % 2 === 0) setStatus(ChatStatus.Idle);
+    if (chat) {
+      setChatId(chat.id);
+      if (chat.shareId) setShareId(chat.shareId);
+      setMessages(chat.messages);
+      setTask(PROVIDER_TO_TASK[chat.provider]);
+      setLanguage(chat.language);
+      if (chat.messages.length % 2 === 0) setStatus(ChatStatus.Idle);
       else setStatus(ChatStatus.ResponseError);
+    } else {
+      const language = localStorage.getItem("language") as Language;
+      if (language) setLanguage(language);
+      setStatus(ChatStatus.Idle);
     }
-  }, [contextChat]);
+  }, [chat]);
+
+  useEffect(() => {
+    localStorage.setItem("language", language);
+  }, [language]);
 
   const resetChat = () => {
+    setStatus(ChatStatus.Idle);
     setChatId(undefined);
     setShareId(undefined);
     setMessages([]);
   };
 
-  return {
-    chatId,
-    setChatId,
-    shareId,
-    setShareId,
-    messages,
-    setMessages,
-    task,
-    setTask,
-    language,
-    setLanguage,
-    status,
-    setStatus,
-    resetChat,
-  };
+  return (
+    <ChatContext.Provider
+      value={{
+        chatId,
+        setChatId,
+        shareId,
+        setShareId,
+        messages,
+        setMessages,
+        task,
+        setTask,
+        language,
+        setLanguage,
+        status,
+        setStatus,
+        resetChat,
+      }}
+    >
+      {children}
+    </ChatContext.Provider>
+  );
+}
+
+export default function useChat() {
+  const context = useContext(ChatContext);
+  if (!context) throw new Error("useChat must be used within a ChatProvider");
+  return context;
 }

@@ -5,18 +5,14 @@ import { useEffect, useRef } from "react";
 import { nanoid } from "nanoid";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatStatus from "@/lib/types/chat-status";
+import useChat from "@/lib/hooks/use-chat";
 import Message from "@/lib/types/message";
 import UserMessage from "./user-message";
 import BotMessage from "./bot-message";
 
-export function MessageList({
-  status,
-  messages,
-}: {
-  status: ChatStatus;
-  messages: Message[];
-}) {
+export function MessageList() {
   const scrollRef = useRef<HTMLUListElement>(null);
+  const { status, messages } = useChat();
 
   useEffect(() => {
     if (!scrollRef.current) return;

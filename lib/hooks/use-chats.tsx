@@ -11,36 +11,36 @@ export function ChatsProvider({
   chats: Chat[];
   children: ReactNode;
 }) {
-  return (
-    <ChatsContext.Provider value={chats}>{children}</ChatsContext.Provider>
-  );
-}
-
-export default function useChats() {
-  const contextChats = useContext(ChatsContext);
-  const [chats, setChats] = useState<Chat[]>([]);
-
-  if (contextChats === undefined)
-    throw new Error("useChats must be used within a ChatsProvider");
+  const [localChats, setLocalChats] = useState<Chat[]>([]);
 
   useEffect(() => {
-    setChats(contextChats);
-  }, [contextChats]);
+    setLocalChats(chats);
+  }, [chats]);
 
   const updateChat = (updatedChat: Chat) => {
-    setChats((prev) => [
+    setLocalChats((prev) => [
       ...prev.filter((chat) => chat.id !== updatedChat.id),
       updatedChat,
     ]);
   };
 
   const removeChat = (chatId: string) => {
-    setChats((prev) => [...prev.filter((chat) => chat.id !== chatId)]);
+    setLocalChats((prev) => [...prev.filter((chat) => chat.id !== chatId)]);
   };
 
-  return {
-    chats,
-    updateChat,
-    removeChat,
-  };
+  return (
+    <ChatsContext.Provider
+      value={{ chats: localChats, updateChat, removeChat }}
+    >
+      {children}
+    </ChatsContext.Provider>
+  );
+}
+
+export default function useChats() {
+  const context = useContext(ChatsContext);
+  if (context === undefined)
+    throw new Error("useChats must be used within a ChatsProvider");
+
+  return context;
 }

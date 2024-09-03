@@ -27,7 +27,7 @@ export default async function ChatPage({ params }: { params: { id: string } }) {
   if (!chat) notFound();
 
   return (
-    <ChatProvider value={chat}>
+    <ChatProvider chat={chat}>
       <Chat />
     </ChatProvider>
   );

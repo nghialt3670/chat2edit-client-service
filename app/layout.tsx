@@ -1,6 +1,7 @@
 import { Inter as FontSans } from "next/font/google";
 import type { Metadata } from "next";
 import { ReactNode } from "react";
+import { ChatProvider } from "@/lib/hooks/use-chat";
 import { Providers } from "@/components/providers";
 import Chat2Edit from "@/components/chat2edit";
 import AppBar from "@/components/app-bar";
@@ -42,7 +43,9 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <AppBar />
-          <Chat2Edit chat={chat} edit={edit} />
+          <ChatProvider>
+            <Chat2Edit chat={chat} edit={edit} />
+          </ChatProvider>
         </Providers>
       </body>
     </html>

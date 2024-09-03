@@ -19,13 +19,13 @@ export default function AppBar() {
         Chat2Edit
       </Link>
       <div className="flex flex-row h-full w-fit ml-auto items-center">
-        <ThemeSelect />
+        <ThemeSelect className="border-none" />
         {session.status === "unauthenticated" && (
           <Button size={"icon"} variant={"ghost"} onClick={() => signIn()}>
             <LogIn size={20} />
           </Button>
         )}
-        {session.status === "loading" && <Skeleton className="size-10" />}
+        {session.status === "loading" && <div className="size-10" />}
         {session.status === "authenticated" && <UserOptions />}
       </div>
     </header>

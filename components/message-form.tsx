@@ -3,31 +3,34 @@
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { Send, Upload, XSquare } from "lucide-react";
 import { nanoid } from "nanoid";
+import { z } from "zod";
 import {
+  formDataSchema,
   MESSAGE_TEXT_MAX_LENGTH,
   TASK_TO_FILE_ACCEPT,
 } from "@/lib/configs/form";
+import { SHOW_RESPONDING_MESSAGE_DELAY_MS } from "@/lib/configs/timer";
+import { TASK_TO_PROVIDER } from "@/lib/configs/provider";
 import useAttachment from "@/lib/hooks/use-attachment";
 import TooltipIconButton from "./tooltip-icon-button";
+import SendResponse from "@/lib/types/send-response";
 import AttachmentPreview from "./attachment-preview";
 import ChatStatus from "@/lib/types/chat-status";
 import Attachment from "@/lib/types/attachment";
+import useChats from "@/lib/hooks/use-chats";
+import useChat from "@/lib/hooks/use-chat";
+import Message from "@/lib/types/message";
+import { fetchJSON } from "@/lib/utils";
 import { Button } from "./ui/button";
-import Task from "@/lib/types/task";
 
-export default function MessageForm({
-  status,
-  task,
-  onSubmit,
-}: {
-  status: ChatStatus;
-  task: Task;
-  onSubmit: (text: string, attachments: Attachment[]) => void;
-}) {
+export default function MessageForm() {
   const [text, setText] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textInputRef = useRef<HTMLInputElement>(null);
   const { attachments, setAttachments, removeAttachment } = useAttachment();
+  const { updateChat } = useChats();
+  const { chatId, setChatId, setMessages, task, language, status, setStatus } =
+    useChat();
 
   const fileToAttachment = async (file: File): Promise<Attachment> => ({
     fileId: nanoid(),
@@ -49,11 +52,84 @@ export default function MessageForm({
     textInputRef.current?.focus();
   };
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    onSubmit(text, attachments);
+
+    const reqMessage: Message = {
+      id: nanoid(),
+      text,
+      attachments,
+      createdAt: new Date(),
+    };
+
+    const formValues = {
+      chatId,
+      text: reqMessage.text,
+      files: attachments.map((att) => att.file),
+      provider: TASK_TO_PROVIDER[task],
+      language,
+    };
+
     setText("");
     setAttachments([]);
+
+    try {
+      formDataSchema.parse(formValues);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errors = error.errors;
+        console.error("Validation errors:", errors);
+        return;
+      }
+    }
+
+    setMessages((prev) => [...prev, reqMessage]);
+    setStatus(ChatStatus.Sending);
+    setTimeout(
+      () => setStatus(ChatStatus.Responding),
+      SHOW_RESPONDING_MESSAGE_DELAY_MS,
+    );
+
+    const formData = new FormData();
+    if (chatId) formData.set("chatId", chatId);
+    formData.set("provider", TASK_TO_PROVIDER[task]);
+    formData.set("text", reqMessage.text);
+    formData.set("language", language);
+    attachments.forEach((att) => formData.append("files", att.file!));
+
+    const response = (await fetchJSON(
+      "/api/chat/send-message",
+      "POST",
+      formData,
+    )) as SendResponse | null;
+
+    if (!response) {
+      setStatus(ChatStatus.RequestError);
+      return;
+    }
+
+    const { currChat, savedReqMessage, resMessage } = response;
+
+    if (currChat) {
+      updateChat(currChat);
+      if (currChat.id !== chatId) {
+        setChatId(currChat.id);
+        history.pushState({}, "", `/${currChat.id}`);
+      }
+    }
+
+    if (!savedReqMessage) {
+      setStatus(ChatStatus.RequestError);
+      return;
+    }
+
+    if (!resMessage) {
+      setStatus(ChatStatus.ResponseError);
+      return;
+    }
+
+    setStatus(ChatStatus.Idle);
+    setMessages((prev) => [...prev, resMessage]);
   };
 
   const accept = TASK_TO_FILE_ACCEPT[task];

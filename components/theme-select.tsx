@@ -1,8 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useState } from "react";
 import { Select, SelectContent, SelectItem } from "./ui/select";
 import ButtonSelectTrigger from "./button-select-trigger";
 import { ButtonProps } from "@/components/ui/button";
@@ -11,8 +11,13 @@ import { cn } from "@/lib/utils";
 export function ThemeSelect({ className }: ButtonProps) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [open, setOpen] = useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false);
 
-  const icon =
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const icon = mounted ? (
     theme === "system" ? (
       resolvedTheme === "light" ? (
         <Sun size={20} />
@@ -23,7 +28,8 @@ export function ThemeSelect({ className }: ButtonProps) {
       <Sun size={20} />
     ) : (
       <Moon size={20} />
-    );
+    )
+  ) : null;
 
   return (
     <Select
@@ -32,12 +38,7 @@ export function ThemeSelect({ className }: ButtonProps) {
       onOpenChange={setOpen}
       onValueChange={(theme) => setTheme(theme)}
     >
-      <ButtonSelectTrigger
-        className={cn(
-          "w-fit px-2.5 hover:bg-accent rounded-md border-none",
-          className,
-        )}
-      >
+      <ButtonSelectTrigger className={cn("border-none", className)}>
         {icon}
       </ButtonSelectTrigger>
       <SelectContent className="mr-1">
