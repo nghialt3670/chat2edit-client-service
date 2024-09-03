@@ -1,7 +1,8 @@
 "use client";
 
+import { AlertCircle, Trash, Trash2 } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
-import { AlertCircle, Trash2 } from "lucide-react";
+import { CircularProgress } from "@mui/material";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
@@ -53,8 +54,8 @@ export default function DeleteChat() {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your chat
-            and remove your data from our servers.
+            This action is irreversible. Deleting this chat will permanently
+            remove all associated data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         {isError && (
@@ -69,7 +70,16 @@ export default function DeleteChat() {
         <AlertDialogFooter>
           <AlertDialogCancel ref={cancelButtonRef}>Cancel</AlertDialogCancel>
           <Button onClick={handleDelete} disabled={isPending || isError}>
-            {isPending ? "Deleting..." : "Delete"}
+            {isPending ? (
+              <CircularProgress
+                className="mr-2 mb-0.5"
+                color="inherit"
+                size={15}
+              />
+            ) : (
+              <Trash2 className="mr-2" size={15} />
+            )}
+            Delete
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
