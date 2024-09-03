@@ -6,7 +6,6 @@ import { nanoid } from "nanoid";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatStatus from "@/lib/types/chat-status";
 import useChat from "@/lib/hooks/use-chat";
-import Message from "@/lib/types/message";
 import UserMessage from "./user-message";
 import BotMessage from "./bot-message";
 
@@ -20,26 +19,28 @@ export function MessageList() {
   }, [status, messages]);
 
   return (
-    <ScrollArea className="size-full rounded-md border min-w-80">
-      {status === ChatStatus.Initializing ? (
-        <LinearProgress color={"inherit"} />
-      ) : (
-        <ul ref={scrollRef} className="p-4 space-y-6">
-          {messages.map((msg, idx) =>
-            idx % 2 === 0 ? (
-              <UserMessage key={msg.id} message={msg} />
-            ) : (
-              <BotMessage key={msg.id} message={msg} />
-            ),
-          )}
-          {status === ChatStatus.Responding && (
-            <BotMessage key={nanoid()} message={undefined} />
-          )}
-          {status === ChatStatus.ResponseError && (
-            <BotMessage key={nanoid()} message={null} />
-          )}
-        </ul>
+    <ScrollArea className="relative size-full rounded-md border min-w-80">
+      {status === ChatStatus.Initializing && (
+        <LinearProgress
+          color={"inherit"}
+          style={{ position: "absolute", top: 0, left: 0, right: 0 }}
+        />
       )}
+      <ul ref={scrollRef} className="p-4 space-y-6">
+        {messages.map((msg, idx) =>
+          idx % 2 === 0 ? (
+            <UserMessage key={msg.id} message={msg} />
+          ) : (
+            <BotMessage key={msg.id} message={msg} />
+          ),
+        )}
+        {status === ChatStatus.Responding && (
+          <BotMessage key={nanoid()} message={undefined} />
+        )}
+        {status === ChatStatus.ResponseError && (
+          <BotMessage key={nanoid()} message={null} />
+        )}
+      </ul>
     </ScrollArea>
   );
 }

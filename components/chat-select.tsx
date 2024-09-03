@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import ButtonSelectTrigger from "./button-select-trigger";
 import TooltipIconButton from "./tooltip-icon-button";
+import ChatStatus from "@/lib/types/chat-status";
 import useChats from "@/lib/hooks/use-chats";
 import { isEmptyObject } from "@/lib/utils";
 import useChat from "@/lib/hooks/use-chat";
@@ -21,11 +22,12 @@ import Chat from "@/lib/types/chat";
 export function ChatSelect({ className }: ButtonProps) {
   const router = useRouter();
   const { chats } = useChats();
-  const { chatId } = useChat();
+  const { chatId, setStatus } = useChat();
 
-  //TODO: Fix chats not update in realtime
+  //TODO: Fix new chat not in order when added
 
   const handleValueChange = (chatId: string) => {
+    setStatus(ChatStatus.Initializing);
     router.push(`/${chatId}`);
   };
 

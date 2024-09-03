@@ -191,11 +191,11 @@ export default function ImageEditor() {
           isEmpty ? "h-full" : "h-fit",
         )}
       >
-        <canvas ref={canvasElementRef}></canvas>
+        <canvas ref={canvasElementRef} />
         {isInitializing && (
           <LinearProgress
             color={"inherit"}
-            style={{ position: "absolute", top: 0 }}
+            className="absolute left-0 right-0"
           />
         )}
       </ScrollArea>
