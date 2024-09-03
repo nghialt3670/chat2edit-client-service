@@ -184,7 +184,7 @@ export default function MessageForm() {
           icon={<Send />}
           text="Send message"
           type={"submit"}
-          disabled={status !== ChatStatus.Idle}
+          disabled={status !== ChatStatus.Idle || !text.trim()}
         />
       </div>
     </form>
