@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
-import { GRIDFS_FOR_MESSAGE_FILES_BUCKET_NAME } from "@/lib/configs/db";
+import { MESSAGE_FILES_BUCKET_NAME } from "@/lib/configs/db";
 import { deleteFromGridFS } from "@/lib/gridfs";
 import connectToMongoDB from "@/lib/mongo";
 import { logError } from "@/lib/utils";
@@ -14,7 +14,7 @@ export async function DELETE(
   try {
     await connectToMongoDB();
     const db = mongoose.connection.db;
-    const bucketName = GRIDFS_FOR_MESSAGE_FILES_BUCKET_NAME;
+    const bucketName = MESSAGE_FILES_BUCKET_NAME;
     if (!db) throw new Error("Error connect to MongoDB");
 
     const { id } = params;

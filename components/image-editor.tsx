@@ -193,7 +193,10 @@ export default function ImageEditor() {
       >
         <canvas ref={canvasElementRef}></canvas>
         {isInitializing && (
-          <LinearProgress color={"inherit"} style={{position: "absolute", top: 0}} />
+          <LinearProgress
+            color={"inherit"}
+            style={{ position: "absolute", top: 0 }}
+          />
         )}
       </ScrollArea>
     </div>

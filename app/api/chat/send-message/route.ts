@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import sharp from "sharp";
 import JSZip from "jszip";
-import { GRIDFS_FOR_MESSAGE_FILES_BUCKET_NAME } from "@/lib/configs/db";
+import { MESSAGE_FILES_BUCKET_NAME } from "@/lib/configs/db";
 import { logError, parseZipComment } from "@/lib/utils";
 import SendResponse from "@/lib/types/send-response";
 import { formDataSchema } from "@/lib/configs/form";
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { chatId, text, files, provider, language } = parsedFormData.data;
-  const bucketName = GRIDFS_FOR_MESSAGE_FILES_BUCKET_NAME;
+  const bucketName = MESSAGE_FILES_BUCKET_NAME;
   let response: SendResponse;
 
   try {
