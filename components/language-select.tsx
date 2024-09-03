@@ -6,10 +6,9 @@ import ButtonSelectTrigger from "./button-select-trigger";
 import TooltipIconButton from "./tooltip-icon-button";
 import useChat from "@/lib/hooks/use-chat";
 import { ButtonProps } from "./ui/button";
-import { cn } from "@/lib/utils";
 
 export default function LanguageSelect({ className }: ButtonProps) {
-  const { language, setLanguage } = useChat();
+  const { chatId, language, setLanguage } = useChat();
 
   const renderLanguageText = () => {
     switch (language) {
@@ -23,8 +22,9 @@ export default function LanguageSelect({ className }: ButtonProps) {
     <Select
       value={language}
       onValueChange={(language: Language) => setLanguage(language)}
+      disabled={!!chatId}
     >
-      <ButtonSelectTrigger className={cn("w-10", className)}>
+      <ButtonSelectTrigger className={className}>
         <TooltipIconButton icon={renderLanguageText()} text="Select language" />
       </ButtonSelectTrigger>
       <SelectContent className="mr-1">

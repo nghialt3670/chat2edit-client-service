@@ -7,14 +7,17 @@ import TooltipIconButton from "./tooltip-icon-button";
 import { ButtonProps } from "@/components/ui/button";
 import useChat from "@/lib/hooks/use-chat";
 import Task from "@/lib/types/task";
-import { cn } from "@/lib/utils";
 
 export function TaskSelect({ className }: ButtonProps) {
-  const { task, setTask } = useChat();
+  const { chatId, task, setTask } = useChat();
 
   return (
-    <Select value={task} onValueChange={(task: Task) => setTask(task)}>
-      <ButtonSelectTrigger className={cn(className)}>
+    <Select
+      value={task}
+      onValueChange={(task: Task) => setTask(task)}
+      disabled={!!chatId}
+    >
+      <ButtonSelectTrigger className={className}>
         <TooltipIconButton icon={TASK_TO_ICON[task]} text="Select task" />
       </ButtonSelectTrigger>
       <SelectContent className="w-full">
