@@ -13,8 +13,8 @@ import {
 import ButtonSelectTrigger from "./button-select-trigger";
 import TooltipIconButton from "./tooltip-icon-button";
 import ChatStatus from "@/lib/types/chat-status";
+import { cn, isEmptyObject } from "@/lib/utils";
 import useChats from "@/lib/hooks/use-chats";
-import { isEmptyObject } from "@/lib/utils";
 import useChat from "@/lib/hooks/use-chat";
 import { ButtonProps } from "./ui/button";
 import Chat from "@/lib/types/chat";
@@ -39,7 +39,7 @@ export function ChatSelect({ className }: ButtonProps) {
   });
 
   return (
-    <Select value={chatId} onValueChange={handleValueChange}>
+    <Select onValueChange={handleValueChange}>
       <ButtonSelectTrigger className={className}>
         <TooltipIconButton icon={<History />} text="Chat history" />
       </ButtonSelectTrigger>
@@ -54,7 +54,10 @@ export function ChatSelect({ className }: ButtonProps) {
                 {groupedChats[date].map((chat) => (
                   <SelectItem
                     key={chat.id}
-                    className="text-nowrap w-full h-10 pr-10 overflow-hidden hover:cursor-pointer"
+                    className={cn(
+                      "text-nowrap w-full h-10 pr-10 overflow-hidden hover:cursor-pointer",
+                      chat.id === chatId && "bg-accent",
+                    )}
                     value={chat.id}
                   >
                     <div className="flex items-center w-60 text-nowrap overflow-hidden">
