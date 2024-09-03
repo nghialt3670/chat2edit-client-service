@@ -29,15 +29,12 @@ export default async function RootLayout({
   edit: ReactNode;
 }>) {
   const session = await auth();
+  const accountId = session?.user?.id;
 
-  const chats = session?.user?.id
+  const chats = accountId
     ? await prisma.chat.findMany({
-        where: {
-          accountId: session?.user?.id,
-        },
-        orderBy: {
-          updatedAt: "desc",
-        },
+        where: { accountId },
+        orderBy: { updatedAt: "desc" },
       })
     : [];
 
