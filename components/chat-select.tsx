@@ -26,9 +26,10 @@ export function ChatSelect({ className }: ButtonProps) {
 
   //TODO: Fix new chat not in order when added
 
-  const handleValueChange = (chatId: string) => {
+  const handleValueChange = (newChatId: string) => {
+    if (newChatId === chatId) return;
     setStatus(ChatStatus.Initializing);
-    router.push(`/${chatId}`);
+    router.push(`/${newChatId}`);
   };
 
   const groupedChats: Record<string, Chat[]> = {};
