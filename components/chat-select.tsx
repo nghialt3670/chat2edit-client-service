@@ -19,7 +19,7 @@ import useChat from "@/lib/hooks/use-chat";
 import { ButtonProps } from "./ui/button";
 import Chat from "@/lib/types/chat";
 
-export function ChatSelect({ className }: ButtonProps) {
+export default function ChatSelect({ className }: ButtonProps) {
   const router = useRouter();
   const { chats } = useChats();
   const { chatId, setStatus } = useChat();

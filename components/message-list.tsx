@@ -9,7 +9,7 @@ import useChat from "@/lib/hooks/use-chat";
 import UserMessage from "./user-message";
 import BotMessage from "./bot-message";
 
-export function MessageList() {
+export default function MessageList() {
   const scrollRef = useRef<HTMLUListElement>(null);
   const { status, messages } = useChat();
 

@@ -8,7 +8,7 @@ import { ButtonProps } from "@/components/ui/button";
 import useChat from "@/lib/hooks/use-chat";
 import Task from "@/lib/types/task";
 
-export function TaskSelect({ className }: ButtonProps) {
+export default function TaskSelect({ className }: ButtonProps) {
   const { chatId, task, setTask } = useChat();
 
   return (
