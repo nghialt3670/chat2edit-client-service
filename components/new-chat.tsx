@@ -6,7 +6,7 @@ import useChat from "@/lib/hooks/use-chat";
 import { Button } from "./ui/button";
 
 export default function NewChat() {
-  const { resetChat, setStatus } = useChat();
+  const { resetChat, setStatus, isNew } = useChat();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -17,7 +17,11 @@ export default function NewChat() {
       disabled={pathname === "/"}
       onClick={() => {
         resetChat();
-        setStatus(ChatStatus.Initializing);
+        // If the current chat is new, it is not actually
+        // navigated to the path with the chat id yet because
+        // of history.pushState api. Hence intializing state
+        // will remain if set
+        if (!isNew) setStatus(ChatStatus.Initializing);
         router.push("/");
       }}
     >

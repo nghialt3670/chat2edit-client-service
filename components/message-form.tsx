@@ -29,8 +29,16 @@ export default function MessageForm() {
   const textInputRef = useRef<HTMLInputElement>(null);
   const { attachments, setAttachments, removeAttachment } = useAttachment();
   const { updateChat } = useChats();
-  const { chatId, setChatId, setMessages, task, language, status, setStatus } =
-    useChat();
+  const {
+    chatId,
+    setChatId,
+    setMessages,
+    task,
+    language,
+    status,
+    setStatus,
+    setIsNew,
+  } = useChat();
 
   const fileToAttachment = async (file: File): Promise<Attachment> => ({
     fileId: nanoid(),
@@ -114,6 +122,7 @@ export default function MessageForm() {
       updateChat(currChat);
       if (currChat.id !== chatId) {
         setChatId(currChat.id);
+        setIsNew(true);
         history.pushState({}, "", `/${currChat.id}`);
       }
     }

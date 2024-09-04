@@ -22,6 +22,7 @@ export function ChatProvider({
   const [task, setTask] = useState<Task>(Task.ImageEditing);
   const [language, setLanguage] = useState<Language>(Language.ENGLISH);
   const [status, setStatus] = useState<ChatStatus>(ChatStatus.Initializing);
+  const [isNew, setIsNew] = useState<boolean>(false);
 
   useEffect(() => {
     if (chat) {
@@ -47,6 +48,7 @@ export function ChatProvider({
     setStatus(ChatStatus.Idle);
     setChatId(undefined);
     setShareId(undefined);
+    setIsNew(false);
     setMessages([]);
   };
 
@@ -65,6 +67,8 @@ export function ChatProvider({
         setLanguage,
         status,
         setStatus,
+        isNew,
+        setIsNew,
         resetChat,
       }}
     >

@@ -17,6 +17,8 @@ export interface ChatContextType {
   setLanguage: Dispatch<SetStateAction<Language>>;
   status: ChatStatus;
   setStatus: Dispatch<SetStateAction<ChatStatus>>;
+  isNew: boolean;
+  setIsNew: Dispatch<SetStateAction<boolean>>;
   resetChat: () => void;
 }
 
