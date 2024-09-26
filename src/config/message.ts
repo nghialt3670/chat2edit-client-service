@@ -1,0 +1,3 @@
+export const MESSAGE_TEXT_MAX_LENGTH = 200;
+export const MAX_MESSAGE_ATTACHMENTS = 3;
+export const FILE_ATTACHMENT_MAX_SIZE = 10 * 1024 * 1024;

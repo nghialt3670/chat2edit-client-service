@@ -1,0 +1,28 @@
+"use client";
+
+import { Select, SelectContent, SelectItem } from "./ui/select";
+import TooltipIconButton from "./buttons/tooltip-icon-button";
+import { Language } from "@/schemas/chat-settings.schema";
+import ButtonSelectTrigger from "./button-select-trigger";
+import { ButtonProps } from "./ui/button";
+import useChat from "@/hooks/use-chat";
+
+export default function LanguageSelect({ className }: ButtonProps) {
+  const { chatId, language, setLanguage } = useChat();
+
+  return (
+    <Select
+      value={language}
+      onValueChange={(language: Language) => setLanguage(language)}
+      disabled={!!chatId}
+    >
+      <ButtonSelectTrigger className={className}>
+        <TooltipIconButton text="Select language">{language}</TooltipIconButton>
+      </ButtonSelectTrigger>
+      <SelectContent className="mr-1">
+        <SelectItem value="en">English</SelectItem>
+        <SelectItem value="vi">Vietnamese</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
