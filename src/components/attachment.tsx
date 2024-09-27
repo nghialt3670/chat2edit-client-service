@@ -1,6 +1,8 @@
 import React, {
   ComponentProps,
   createContext,
+  Suspense,
+  use,
   useContext,
   useTransition,
 } from "react";
@@ -22,6 +24,7 @@ import useEditFile from "@/hooks/use-edit-file";
 import IconButton from "./buttons/icon-button";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "./ui/skeleton";
 
 const AttachmentContext = createContext<IAttachment | undefined>(undefined);
 
@@ -59,9 +62,18 @@ export function LinkAttachment() {
   return <div></div>;
 }
 
-export function RefAttachment() {
+export function RefAttachment({className}: ComponentProps<"div">) {
   const { ref } = useAttachment();
-  return <div></div>;
+
+  const response = use(fetch(`/api/attachments/${ref}`));
+  const payload = response.ok ? use(response.json()) : null;
+  const attachment = payload ? attachmentSchema.parse(payload) : null
+
+  return (
+    <>
+      {attachment ? <Attachment className={className} attachment={attachment} /> : <div>error</div>}
+    </>
+  );
 }
 
 export default function Attachment({
@@ -84,14 +96,18 @@ export default function Attachment({
         return <LinkAttachment />;
 
       case "ref":
-        return <RefAttachment />;
+        return (
+          <Suspense fallback={<Skeleton className="size-full" />}>
+            <RefAttachment className={className} />
+          </Suspense>
+        );
     }
   };
 
   return (
     <AttachmentContext.Provider value={attachment}>
       <div
-        className={cn("relative group rounded-md overflow-hidden", className)}
+        className={cn("relative group rounded-lg overflow-hidden", className)}
       >
         {renderAttachment()}
         {children}
@@ -181,7 +197,7 @@ Attachment.Options = function AttachmentOptions() {
         <DropdownMenuItem
           className="hover:cursor-pointer"
           onSelect={() => setEditFile(file!)}
-          disabled={!!file}
+          disabled={!file}
         >
           <Edit className="mr-2 size-4" />
           <span>Edit</span>
