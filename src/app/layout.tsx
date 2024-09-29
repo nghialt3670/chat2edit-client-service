@@ -43,13 +43,11 @@ export default async function RootLayout({
 
   if (accountId) {
     try {
-      const endpoint = `${ENV.BACKEND_API_BASE_URL}/chats?accountId=${accountId}`;
+      const endpoint = `${ENV.BACKEND_API_BASE_URL}/api/chats?accountId=${accountId}`;
       const response = await fetch(endpoint);
-      if (!response.ok) chats = null;
-      else {
-        const payload = await response.json();
-        chats = z.array(chatPreviewResponseSchema).parse(payload);
-      }
+      if (!response.ok) throw new Error();
+      const payload = await response.json();
+      chats = z.array(chatPreviewResponseSchema).parse(payload);
     } catch {
       chats = null;
     }

@@ -22,9 +22,9 @@ import attachmentSchema, {
 import useAttachments from "@/hooks/use-attachments";
 import useEditFile from "@/hooks/use-edit-file";
 import IconButton from "./buttons/icon-button";
+import { Skeleton } from "./ui/skeleton";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
-import { Skeleton } from "./ui/skeleton";
 
 const AttachmentContext = createContext<IAttachment | undefined>(undefined);
 
@@ -62,16 +62,20 @@ export function LinkAttachment() {
   return <div></div>;
 }
 
-export function RefAttachment({className}: ComponentProps<"div">) {
+export function RefAttachment({ className }: ComponentProps<"div">) {
   const { ref } = useAttachment();
 
   const response = use(fetch(`/api/attachments/${ref}`));
   const payload = response.ok ? use(response.json()) : null;
-  const attachment = payload ? attachmentSchema.parse(payload) : null
+  const attachment = payload ? attachmentSchema.parse(payload) : null;
 
   return (
     <>
-      {attachment ? <Attachment className={className} attachment={attachment} /> : <div>error</div>}
+      {attachment ? (
+        <Attachment className={className} attachment={attachment} />
+      ) : (
+        <div>error</div>
+      )}
     </>
   );
 }

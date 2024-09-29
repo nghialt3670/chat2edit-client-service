@@ -5,9 +5,9 @@ import MessageForm from "./message-form";
 import MessageList from "./message-list";
 import useChat from "@/hooks/use-chat";
 import ChatSelect from "./chat-select";
-import DeleteChat from "./delete-chat";
+import ChatDelete from "./chat-delete";
 import TaskSelect from "./task-select";
-import ShareChat from "./share-chat";
+import ChatShare from "./chat-share";
 import NewChat from "./new-chat";
 
 export default function Chat() {
@@ -24,8 +24,8 @@ export default function Chat() {
         </div>
         {chatId && (
           <div className="flex flex-row ml-auto items-center">
-            <DeleteChat />
-            <ShareChat />
+            <ChatDelete />
+            <ChatShare />
           </div>
         )}
       </div>

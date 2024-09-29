@@ -16,9 +16,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import TooltipIconButton from "./buttons/tooltip-icon-button";
 import objectIdSchema from "@/schemas/object-id.schema";
 import { Button } from "@/components/ui/button";
+import TextButton from "./buttons/text-button";
 import useChat from "@/hooks/use-chat";
 
-export default function ShareChat() {
+export default function ChatShare() {
   const [open, setOpen] = useState<boolean>(false);
   const [isCopied, setIsCopied] = useState<boolean>();
   const [isCreateError, setIsCreateError] = useState<boolean>();
@@ -29,7 +30,7 @@ export default function ShareChat() {
 
   if (!chatId) return undefined;
 
-  const endpoint = `/api/chats/${chatId}/share-id`;
+  const endpoint = `/api/chats/${chatId}/shareId`;
 
   const handleCopyClick = async () => {
     if (!shareId) return;
@@ -42,12 +43,9 @@ export default function ShareChat() {
     startCreating(async () => {
       try {
         const response = await fetch(endpoint, { method: "POST" });
-
-        if (!response.ok) throw new Error("Failed to create share ID");
-
+        if (!response.ok) throw new Error();
         const payload = await response.json();
         const shareId = objectIdSchema.parse(payload);
-
         setShareId(shareId);
       } catch (error) {
         setIsCreateError(true);
@@ -57,23 +55,25 @@ export default function ShareChat() {
 
   const handleDeleteClick = async () => {
     startDeleting(async () => {
-      (await fetchJSON(endpoint, "DELETE"))
-        ? setShareId(undefined)
-        : setIsDeleteError(true);
+      try {
+        const response = await fetch(endpoint, { method: "DELETE" });
+        if (!response.ok) throw new Error();
+        setShareId(undefined);
+      } catch (error) {
+        setIsDeleteError(true);
+      }
     });
   };
 
   const shareLink = shareId
-    ? `${window.location.origin}/share/chat/${shareId}`
+    ? `${window.location.origin}/chats/shared/${shareId}`
     : undefined;
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <TooltipIconButton
-        icon={<Forward />}
-        text="Share chat"
-        onClick={() => setOpen(true)}
-      />
+      <TooltipIconButton text="Share chat" onClick={() => setOpen(true)}>
+        <Forward />
+      </TooltipIconButton>
       <AlertDialogContent className="flex flex-col">
         <AlertDialogHeader>
           <AlertDialogTitle>Share this chat</AlertDialogTitle>
@@ -114,18 +114,25 @@ export default function ShareChat() {
           </Alert>
         )}
         <AlertDialogFooter>
-          <AlertDialogCancel>{isCopied ? "Close" : "Cancel"}</AlertDialogCancel>
+          <AlertDialogCancel className="h-8">
+            {isCopied ? "Close" : "Cancel"}
+          </AlertDialogCancel>
           {shareLink ? (
-            <Button onClick={handleCopyClick} disabled={isCopied}>
+            <TextButton
+              variant={"default"}
+              onClick={handleCopyClick}
+              disabled={isCopied}
+            >
               {isCopied ? "Link Copied" : "Copy Link"}
-            </Button>
+            </TextButton>
           ) : (
-            <Button
+            <TextButton
+              variant={"secondary"}
               onClick={handleCreateClick}
               disabled={isCreating || isCreateError}
             >
-              {isCreating ? "Creating.." : "Create Link"}
-            </Button>
+              {isCreating ? "Creating..." : "Create Link"}
+            </TextButton>
           )}
         </AlertDialogFooter>
       </AlertDialogContent>

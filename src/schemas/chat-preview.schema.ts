@@ -1,15 +1,16 @@
 import { z } from "zod";
 import chatSettingsSchema from "./chat-settings.schema";
+import dateStringSchema from "./date-string.schema";
 import objectIdSchema from "./object-id.schema";
 
-const chatPreviewResponseSchema = z.object({
+const chatPreviewSchema = z.object({
   id: objectIdSchema,
   title: z.string(),
   settings: chatSettingsSchema,
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: dateStringSchema,
+  updatedAt: dateStringSchema,
 });
 
-export type ChatPreview = z.infer<typeof chatPreviewResponseSchema>;
+export type ChatPreview = z.infer<typeof chatPreviewSchema>;
 
-export default chatPreviewResponseSchema;
+export default chatPreviewSchema;

@@ -2,8 +2,7 @@ export type ChatTask = "image-editing" | "sheet-editing";
 export type ChatStatus =
   | "idling"
   | "initializing"
-  | "attachment-uploading"
-  | "message-creating"
-  | "message-sending"
+  | "uploading"
+  | "sending"
   | "responding"
-  | "error-response";
+  | "no-response";

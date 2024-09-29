@@ -16,10 +16,11 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import TooltipIconButton from "./buttons/tooltip-icon-button";
 import { Button } from "@/components/ui/button";
+import TextButton from "./buttons/text-button";
 import useHistory from "@/hooks/use-history";
 import useChat from "@/hooks/use-chat";
 
-export default function DeleteChat() {
+export default function ChatDelete() {
   const [isPending, startTransition] = useTransition();
   const [isError, setIsError] = useState<boolean>(false);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
@@ -32,12 +33,14 @@ export default function DeleteChat() {
 
   const handleDelete = async () => {
     startTransition(async () => {
-      const response = await fetch(`/api/chat/${chatId}`, { method: "DELETE" });
-      if (response.ok) {
+      try {
+        const endpoint = `/api/chats/${chatId}`;
+        const response = await fetch(endpoint, { method: "DELETE" });
+        if (!response.ok) throw new Error();
         router.push("/");
         removeChat(chatId);
         if (cancelButtonRef.current) cancelButtonRef.current.click();
-      } else {
+      } catch {
         setIsError(true);
       }
     });
@@ -66,8 +69,14 @@ export default function DeleteChat() {
           </Alert>
         )}
         <AlertDialogFooter>
-          <AlertDialogCancel ref={cancelButtonRef}>Cancel</AlertDialogCancel>
-          <Button onClick={handleDelete} disabled={isPending || isError}>
+          <AlertDialogCancel className="h-8" ref={cancelButtonRef}>
+            Cancel
+          </AlertDialogCancel>
+          <TextButton
+            variant={"destructive"}
+            onClick={handleDelete}
+            disabled={isPending || isError}
+          >
             {isPending ? (
               <CircularProgress
                 className="mr-2 mb-0.5"
@@ -78,7 +87,7 @@ export default function DeleteChat() {
               <Trash2 className="mr-2" size={15} />
             )}
             Delete
-          </Button>
+          </TextButton>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
