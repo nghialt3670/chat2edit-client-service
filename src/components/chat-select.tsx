@@ -40,6 +40,8 @@ export default function ChatSelect({ className }: ButtonProps) {
   };
 
   const groupedChats: Record<string, ChatPreview[]> = {};
+  chats.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+
   chats.forEach((chat) => {
     const date = format(new Date(chat.updatedAt), "yyyy-MM-dd");
     if (!groupedChats[date]) groupedChats[date] = [];
@@ -54,6 +56,7 @@ export default function ChatSelect({ className }: ButtonProps) {
         </TooltipIconButton>
       </ButtonSelectTrigger>
       <SelectContent className="w-full">
+        {isEmptyObject(groupedChats) && <p className="opacity-50 m-2">No chat history</p>}
         {!isEmptyObject(groupedChats) &&
           Object.keys(groupedChats).map((date) => (
             <SelectGroup key={date}>

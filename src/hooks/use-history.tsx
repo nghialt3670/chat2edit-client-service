@@ -11,6 +11,7 @@ import { ChatPreview } from "@/schemas/chat-preview.schema";
 
 interface HistoryContextType {
   chats: ChatPreview[] | null | undefined;
+  addChat: (chat: ChatPreview) => void;
   updateChat: (chat: ChatPreview) => void;
   removeChat: (chatId: string) => void;
 }
@@ -30,6 +31,10 @@ export function HistoryProvider({
 
   useEffect(() => setLocalChats(chats), [chats]);
 
+  const addChat = (newChat: ChatPreview) => {
+    setLocalChats(prev => prev ? [...prev, newChat] : prev)
+  }
+
   const updateChat = (updatedChat: ChatPreview) => {
     setLocalChats((prev) =>
       prev
@@ -46,7 +51,7 @@ export function HistoryProvider({
 
   return (
     <HistoryContext.Provider
-      value={{ chats: localChats, updateChat, removeChat }}
+      value={{ chats: localChats, addChat, updateChat, removeChat }}
     >
       {children}
     </HistoryContext.Provider>

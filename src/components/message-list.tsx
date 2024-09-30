@@ -52,7 +52,7 @@ export default function MessageList() {
           ),
         )}
         {status === "responding" && <Message.Responding />}
-        {status === "error-response" && <Message.Error />}
+        {status === "no-response" && <Message.Error />}
       </ul>
     </ScrollArea>
   );

@@ -15,12 +15,14 @@ import FormAttachment from "./form-attachment";
 import useChat from "@/hooks/use-chat";
 import Attachment from "./attachment";
 import { nanoid } from "nanoid";
+import useHistory from "@/hooks/use-history";
 
 export default function MessageForm() {
   const [text, setText] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textInputRef = useRef<HTMLInputElement>(null);
   const { uploadeds, setUploadeds } = useAttachments();
+  const { addChat } = useHistory();
   const {
     chatId,
     setChatId,
@@ -65,7 +67,8 @@ export default function MessageForm() {
       try {
         setStatus("initializing");
         const headers = { "Content-Type": "application/json" };
-        const body = JSON.stringify({ settings: { provider, language } });
+        const settings = { provider, language }
+        const body = JSON.stringify({ settings });
         const response = await fetch("/api/chats", {
           method: "POST",
           headers,
@@ -74,10 +77,19 @@ export default function MessageForm() {
         if (!response.ok) throw new Error();
         const payload = await response.json();
         currChatId = objectIdSchema.parse(payload);
+        setIsNew(true);
         setChatId(currChatId);
+        addChat({
+          id: currChatId,
+          title: text,
+          settings, 
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
         history.pushState({}, "", `/${currChatId}`);
       } catch {
         toast("Failed to create chat");
+        return;
       } finally {
         setStatus("idling");
       }
@@ -87,6 +99,7 @@ export default function MessageForm() {
       const attachmentIds = uploadeds.map((att) => att.id);
       const headers = { "Content-Type": "application/json" };
       const body = JSON.stringify({ text, attachmentIds });
+      console.log(body)
       const endpoint = `/api/messages?chatId=${currChatId}`;
       const response = await fetch(endpoint, { method: "POST", headers, body });
       if (!response.ok) throw new Error();
@@ -101,14 +114,15 @@ export default function MessageForm() {
       setUploadeds([]);
     } catch {
       toast("Failed to send message");
+      return;
     } finally {
       setStatus("idling");
     }
 
     try {
       setStatus("responding");
-      const endpoint = `/api/messages/send?chatId=${chatId}`;
-      const response = await fetch("/api/messages/send");
+      const endpoint = `/api/messages/send?chatId=${currChatId}`;
+      const response = await fetch(endpoint, {method: "POST"});
       if (!response.ok) throw new Error();
       const payload = await response.json();
       const message = messageSchema.parse(payload);

@@ -57,7 +57,7 @@ export function ChatProvider({
       setProvider(chat.settings.provider);
       setLanguage(chat.settings.language);
       if (chat.messages.length % 2 === 0) setStatus("idling");
-      else setStatus("error-response");
+      else setStatus("no-response");
     } else {
       setStatus("idling");
     }
