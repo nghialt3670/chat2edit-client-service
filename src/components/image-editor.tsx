@@ -27,7 +27,7 @@ export default function ImageEditor() {
       if (resizeTimeoutRef.current) clearTimeout(resizeTimeoutRef.current);
 
       resizeTimeoutRef.current = setTimeout(() => {
-        for (let entry of entries) {
+        for (const entry of entries) {
           if (!fabricCanvasRef.current) return;
           const canvas = fabricCanvasRef.current;
           const maxWidth = entry.contentRect.width;
@@ -129,13 +129,6 @@ export default function ImageEditor() {
 
     setIsEmpty(false);
     fabricCanvas.renderAll();
-  };
-
-  const handleRemoveObject = () => {
-    if (fabricCanvasRef.current && selectedObject) {
-      fabricCanvasRef.current.remove(selectedObject);
-      setSelectedObject(null);
-    }
   };
 
   const handleDownloadClick = () => {

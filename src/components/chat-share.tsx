@@ -2,7 +2,6 @@
 
 import { AlertCircle, Forward, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
-import { z } from "zod";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -47,7 +46,7 @@ export default function ChatShare() {
         const payload = await response.json();
         const shareId = objectIdSchema.parse(payload);
         setShareId(shareId);
-      } catch (error) {
+      } catch {
         setIsCreateError(true);
       }
     });
@@ -59,7 +58,7 @@ export default function ChatShare() {
         const response = await fetch(endpoint, { method: "DELETE" });
         if (!response.ok) throw new Error();
         setShareId(undefined);
-      } catch (error) {
+      } catch {
         setIsDeleteError(true);
       }
     });

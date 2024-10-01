@@ -27,6 +27,6 @@ export async function readFileAsText(
   });
 }
 
-export function isEmptyObject(object: Object) {
+export function isEmptyObject(object: object) {
   return Object.keys(object).length === 0;
 }

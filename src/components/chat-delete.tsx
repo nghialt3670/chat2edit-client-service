@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, Trash, Trash2 } from "lucide-react";
+import { AlertCircle, Trash2 } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
 import { CircularProgress } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import TooltipIconButton from "./buttons/tooltip-icon-button";
-import { Button } from "@/components/ui/button";
 import TextButton from "./buttons/text-button";
 import useHistory from "@/hooks/use-history";
 import useChat from "@/hooks/use-chat";

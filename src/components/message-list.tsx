@@ -6,7 +6,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import useChat from "@/hooks/use-chat";
 import Attachment from "./attachment";
 import Message from "./message";
-import { nanoid } from "nanoid";
 
 export default function MessageList() {
   const scrollRef = useRef<HTMLUListElement>(null);
@@ -28,22 +27,22 @@ export default function MessageList() {
       <ul ref={scrollRef} className="p-4 space-y-6">
         {messages.map((msg) =>
           msg.type === "request" ? (
-            <Message message={msg}>
+            <Message key={msg.id} message={msg}>
               <Message.Text className="bg-accent ml-auto" />
               <Message.Attachments>
                 {msg.attachments.map((att) => (
-                  <Attachment className="w-80 ml-auto" attachment={att}>
+                  <Attachment key={att.id} className="w-80 ml-auto" attachment={att}>
                     <Attachment.Options />
                   </Attachment>
                 ))}
               </Message.Attachments>
             </Message>
           ) : (
-            <Message message={msg}>
+            <Message key={msg.id} message={msg}>
               <Message.Text />
               <Message.Attachments>
                 {msg.attachments.map((att) => (
-                  <Attachment attachment={att}>
+                  <Attachment key={att.id} attachment={att}>
                     <Attachment.Options />
                   </Attachment>
                 ))}

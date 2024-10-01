@@ -11,7 +11,6 @@ import attachmentSchema from "@/schemas/attachment.schema";
 import { MESSAGE_TEXT_MAX_LENGTH } from "@/config/message";
 import objectIdSchema from "@/schemas/object-id.schema";
 import useAttachments from "@/hooks/use-attachments";
-import FormAttachment from "./form-attachment";
 import useChat from "@/hooks/use-chat";
 import Attachment from "./attachment";
 import { nanoid } from "nanoid";
@@ -49,7 +48,7 @@ export default function MessageForm() {
       const payload = await response.json();
       const uploadeds = z.array(attachmentSchema).parse(payload);
       setUploadeds(uploadeds);
-    } catch (error) {
+    } catch {
       toast("Failed to upload files");
     } finally {
       textInputRef.current?.focus();
@@ -163,7 +162,7 @@ export default function MessageForm() {
       {uploadeds.length > 0 && (
         <ul className="m-2 p-2 flex flex-wrap gap-6 max-h-32 scroll-m-11 justify-between after:flex-auto overflow-y-auto">
           {uploadeds.map((att) => (
-            <Attachment className="size-20" attachment={att}>
+            <Attachment key={att.id} className="size-20" attachment={att}>
               <Attachment.Remove />
             </Attachment>
           ))}
