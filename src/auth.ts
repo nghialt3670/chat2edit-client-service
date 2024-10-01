@@ -1,6 +1,7 @@
 import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import NextAuth from "next-auth";
+import ENV from "./lib/env";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [Google, GitHub],
@@ -8,7 +9,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async signIn({ user, account }) {
       if (!account) return false;
 
-      const endpoint = "http://localhost:4000/api/sign-in";
+      const endpoint = `${ENV.BACKEND_API_BASE_URL}/api/sign-in`;
       const method = "POST";
       const headers = { "Content-Type": "application/json" };
       const body = JSON.stringify({ user, account });
