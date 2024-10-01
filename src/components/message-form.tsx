@@ -22,7 +22,7 @@ export default function MessageForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textInputRef = useRef<HTMLInputElement>(null);
   const { uploadeds, setUploadeds } = useAttachments();
-  const { addChat } = useHistory();
+  const { chats, addChat, updateChat } = useHistory();
   const {
     chatId,
     setChatId,
@@ -50,7 +50,7 @@ export default function MessageForm() {
       const uploadeds = z.array(attachmentSchema).parse(payload);
       setUploadeds(uploadeds);
     } catch (error) {
-      toast("Fail to upload files");
+      toast("Failed to upload files");
     } finally {
       textInputRef.current?.focus();
       event.target.value = "";
@@ -62,6 +62,7 @@ export default function MessageForm() {
     event.preventDefault();
 
     let currChatId = chatId;
+    let currChatPreview = chats!.find((chat) => chat.id === currChatId)
 
     if (!currChatId)
       try {
@@ -74,18 +75,24 @@ export default function MessageForm() {
           headers,
           body,
         });
+
         if (!response.ok) throw new Error();
+
         const payload = await response.json();
         currChatId = objectIdSchema.parse(payload);
+
         setIsNew(true);
         setChatId(currChatId);
-        addChat({
+
+        currChatPreview = {
           id: currChatId,
           title: text,
           settings, 
           createdAt: new Date(),
           updatedAt: new Date(),
-        })
+        }
+        addChat(currChatPreview)
+
         history.pushState({}, "", `/${currChatId}`);
       } catch {
         toast("Failed to create chat");
@@ -99,10 +106,13 @@ export default function MessageForm() {
       const attachmentIds = uploadeds.map((att) => att.id);
       const headers = { "Content-Type": "application/json" };
       const body = JSON.stringify({ text, attachmentIds });
-      console.log(body)
       const endpoint = `/api/messages?chatId=${currChatId}`;
       const response = await fetch(endpoint, { method: "POST", headers, body });
+
       if (!response.ok) throw new Error();
+
+      updateChat({...currChatPreview!, title: text})
+
       const message: Message = {
         id: nanoid(),
         type: "request",
@@ -110,6 +120,7 @@ export default function MessageForm() {
         attachments: uploadeds,
       };
       setMessages((prev) => [...prev, message]);
+
       setText("");
       setUploadeds([]);
     } catch {
@@ -123,10 +134,14 @@ export default function MessageForm() {
       setStatus("responding");
       const endpoint = `/api/messages/send?chatId=${currChatId}`;
       const response = await fetch(endpoint, {method: "POST"});
+
       if (!response.ok) throw new Error();
+
       const payload = await response.json();
       const message = messageSchema.parse(payload);
       setMessages((prev) => [...prev, message]);
+
+      updateChat({...currChatPreview!, title: message.text});
       setStatus("idling");
     } catch {
       setStatus("no-response");

@@ -142,10 +142,26 @@ Attachment.Remove = function AttachmentRemove() {
 
 Attachment.Options = function AttachmentOptions() {
   const { id, file } = useAttachment();
-  const { editFile, setEditFile } = useEditFile();
+  const { setEditFile } = useEditFile();
   const { uploadeds, insertUploaded } = useAttachments();
+  const [isFetchingFile, startFetchingFile] = useTransition();
   const [isDownloading, startDownloading] = useTransition();
   const [isCreatingRef, startCreatingRef] = useTransition();
+
+  const handleEditClick = (e: Event) => {
+    e.preventDefault();
+    startFetchingFile(async () => {
+      try {
+        if (!file) return;
+        const response = await fetch(`/api/attachments/${id}/file`);
+        if (!response.ok) throw new Error();
+        const blob = await response.blob();
+        setEditFile(new File([blob], file.name, {type: file.contentType}))
+      } catch {
+        toast("Failed to fetch file");
+      }
+    });
+  }
 
   const handleDownloadSelect = (e: Event) => {
     e.preventDefault();
@@ -185,6 +201,7 @@ Attachment.Options = function AttachmentOptions() {
   };
 
   const disableReply = uploadeds.map((att) => att.ref).includes(id);
+  const disableAll = isFetchingFile || isDownloading || isCreatingRef
 
   return (
     <DropdownMenu>
@@ -200,16 +217,20 @@ Attachment.Options = function AttachmentOptions() {
       <DropdownMenuContent className="w-fit mr-4">
         <DropdownMenuItem
           className="hover:cursor-pointer"
-          onSelect={() => setEditFile(file!)}
-          disabled={!file}
+          onSelect={handleEditClick}
+          disabled={!file || disableAll}
         >
-          <Edit className="mr-2 size-4" />
+          {isFetchingFile ? (
+            <CircularProgress color="inherit" size={16} className="mr-2" />
+          ) : (
+            <Edit className="mr-2 size-4" />
+          )}
           <span>Edit</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className="hover:cursor-pointer"
           onSelect={handleDownloadSelect}
-          disabled={isDownloading}
+          disabled={disableAll}
         >
           {isDownloading ? (
             <CircularProgress color="inherit" size={16} className="mr-2" />
@@ -221,9 +242,13 @@ Attachment.Options = function AttachmentOptions() {
         <DropdownMenuItem
           className="hover:cursor-pointer"
           onSelect={handleReplySelect}
-          disabled={disableReply || isCreatingRef}
+          disabled={disableReply || disableAll}
         >
-          <Reply className="mr-2 size-4" />
+          {isCreatingRef ? (
+            <CircularProgress color="inherit" size={16} className="mr-2" />
+          ) : (
+            <Reply className="mr-2 size-4" />
+          )}
           <span>Reply</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

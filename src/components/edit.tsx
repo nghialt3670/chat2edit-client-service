@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ImageEditor from "./image-editor";
+import SheetEditor from "./sheet-editor";
 
 export default function Edit() {
   const [editor, setEditor] = useState<"image-editor" | "tabular-editor">(
@@ -20,13 +21,13 @@ export default function Edit() {
       case "image-editor":
         return <ImageEditor />;
       case "tabular-editor":
-        return <TabularEditor />;
+        return <SheetEditor />;
     }
   };
 
   return (
     <div className="size-full flex flex-col space-y-4">
-      {/* {renderEditor()} */}
+      {renderEditor()}
       <div className="border border-transparent">
         <Select
           onValueChange={(editor) =>

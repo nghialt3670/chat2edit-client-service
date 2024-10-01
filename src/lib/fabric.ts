@@ -15,7 +15,7 @@ export async function initCanvasFromImage(file: File): Promise<Canvas> {
 
 export async function loadCanvasFromFile(file: File): Promise<Canvas> {
   const json = await readFileAsText(file);
-  if (!json) throw new Error("Fail to read canvas file");
+  if (!json) throw new Error("Failed to read canvas file");
   const canvas = new Canvas();
   await canvas.loadFromJSON(json);
   resizeCanvasToFit(canvas);

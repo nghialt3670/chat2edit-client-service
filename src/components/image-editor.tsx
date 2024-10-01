@@ -6,9 +6,9 @@ import { Download, Upload } from "lucide-react";
 import { LinearProgress } from "@mui/material";
 import { cn, readFileAsDataURL, readFileAsText } from "@/lib/utils";
 import { EDITOR_RESIZE_UPDATE_DELAY_MS } from "@/config/timer";
-// import useEditAttachment from "@/lib/hooks/use-edit-attachment";
 import TooltipIconButton from "./buttons/tooltip-icon-button";
 import { ScrollArea } from "./ui/scroll-area";
+import useEditFile from "@/hooks/use-edit-file";
 
 export default function ImageEditor() {
   const canvasElementRef = useRef<HTMLCanvasElement>(null);
@@ -20,18 +20,7 @@ export default function ImageEditor() {
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isEmpty, setIsEmpty] = useState<boolean>(true);
-  const [file, setFile] = useState<File | null>();
-  const { editAttachment } = useEditAttachment();
-
-  useEffect(() => {
-    const updateFile = async () => {
-      if (!editAttachment) return;
-      const file = await getFile(editAttachment);
-      setFile(file);
-    };
-    setIsInitializing(true);
-    updateFile();
-  }, [editAttachment]);
+  const { editFile } = useEditFile();
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
@@ -70,23 +59,24 @@ export default function ImageEditor() {
         fabricCanvasRef.current = new FabricCanvas(canvasElementRef.current);
 
       const fabricCanvas = fabricCanvasRef.current;
+      
       if (
-        !file ||
+        !editFile ||
         !fabricCanvas ||
-        (!file.type.startsWith("image/") && !file.name.endsWith(".canvas"))
+        (!editFile.type.startsWith("image/") && !editFile.name.endsWith(".canvas"))
       ) {
         setIsInitializing(false);
         return;
       }
 
-      if (file.type.startsWith("image/")) {
-        const dataURL = await readFileAsDataURL(file);
+      if (editFile.type.startsWith("image/")) {
+        const dataURL = await readFileAsDataURL(editFile);
         if (dataURL)
           fabricCanvas.backgroundImage = await FabricImage.fromURL(
             dataURL.toString(),
           );
-      } else if (file.name.endsWith(".canvas")) {
-        const json = await readFileAsText(file);
+      } else if (editFile.name.endsWith(".canvas")) {
+        const json = await readFileAsText(editFile);
         if (json) await fabricCanvas.loadFromJSON(json);
       } else {
         return;
@@ -108,13 +98,13 @@ export default function ImageEditor() {
       setIsEmpty(false);
     };
 
-    const disposeFabric = () => {
-      if (fabricCanvasRef.current) fabricCanvasRef.current.dispose();
-    };
     setIsInitializing(true);
     initFabricCanvas();
-    return disposeFabric;
-  }, [file]);
+
+    return () => {
+      if (fabricCanvasRef.current) fabricCanvasRef.current.dispose();
+    };
+  }, [editFile]);
 
   const handleAddImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const fabricCanvas = fabricCanvasRef.current;
@@ -173,15 +163,17 @@ export default function ImageEditor() {
           hidden
         />
         <TooltipIconButton
-          icon={<Upload />}
           text="Upload image"
           onClick={() => fileInputRef.current?.click()}
-        />
+        >
+          <Upload />
+        </TooltipIconButton>
         <TooltipIconButton
-          icon={<Download />}
           text="Download image"
           onClick={handleDownloadClick}
-        />
+        >
+          <Download />
+        </TooltipIconButton>
       </div>
       <ScrollArea
         id="editor-panel"
