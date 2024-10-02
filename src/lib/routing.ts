@@ -8,7 +8,8 @@ export async function forwardWithAuth(request: NextRequest, baseUrl: string) {
   
     if (!accountId) return NextResponse.redirect("/sign-in");
   
-    const url = new URL(request.nextUrl.pathname, baseUrl);
+    const url = new URL(`${baseUrl}${request.nextUrl.pathname}`);
+    console.log(url.toString())
     url.searchParams.set("accountId", accountId);
   
     request.nextUrl.searchParams.forEach((value, key) => {
@@ -27,7 +28,6 @@ export async function forwardWithAuth(request: NextRequest, baseUrl: string) {
       body = JSON.stringify(jsonBody);
       headers.set("Content-Type", "application/json");
     }
-  
     const response = await fetch(url.toString(), { method, headers, body });
   
     return new NextResponse(response.body, {
