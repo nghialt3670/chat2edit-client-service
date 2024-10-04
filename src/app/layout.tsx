@@ -6,8 +6,8 @@ import chatPreviewResponseSchema, {
 } from "@/schemas/chat-preview.schema";
 import { Providers } from "@/components/providers";
 import { SlotsProvider } from "@/hooks/use-slots";
-import Chat2Edit from "@/components/chat2edit";
-import AppBar from "@/components/app-bar";
+import Chat2Edit from "@/app/_components/chat2edit";
+import AppBar from "@/app/_components/app-bar";
 import { auth } from "@/auth";
 import ENV from "@/lib/env";
 import "./globals.css";

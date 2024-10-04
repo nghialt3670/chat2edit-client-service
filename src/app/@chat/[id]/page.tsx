@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import chatDetailsSchema, { ChatDetails } from "@/schemas/chat-details.schema";
 import { ChatProvider } from "@/hooks/use-chat";
-import Chat from "@/components/chat";
+import Chat from "@/app/@chat/_components/chat";
 import { auth } from "@/auth";
 import ENV from "@/lib/env";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import TextButton from "./buttons/text-button";
+import TextButton from "../../../components/buttons/text-button";
 import useChat from "@/hooks/use-chat";
 
 export default function NewChat() {

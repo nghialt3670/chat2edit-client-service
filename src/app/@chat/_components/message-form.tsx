@@ -5,7 +5,7 @@ import { Send, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import messageSchema, { Message } from "@/schemas/message.schema";
-import TooltipIconButton from "./buttons/tooltip-icon-button";
+import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
 import { PROVIDER_TO_FILE_ACCEPT } from "@/config/provider";
 import attachmentSchema from "@/schemas/attachment.schema";
 import { MESSAGE_TEXT_MAX_LENGTH } from "@/config/message";

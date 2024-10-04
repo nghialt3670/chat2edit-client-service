@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ChatEditDesktop from "@/components/chat2edit-desktop";
-import ChatEditMobile from "@/components/chat2edit-mobile";
+import ChatEditDesktop from "@/app/_components/chat2edit-desktop";
+import ChatEditMobile from "@/app/_components/chat2edit-mobile";
 
 export default function Chat2Edit() {
   const [width, setWidth] = useState<number>();

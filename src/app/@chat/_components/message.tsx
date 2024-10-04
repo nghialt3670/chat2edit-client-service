@@ -8,9 +8,9 @@ import ReactMarkdown from "react-markdown";
 import { AlertTitle } from "@mui/material";
 import { AlertCircle } from "lucide-react";
 import { Message as IMessage } from "@/schemas/message.schema";
-import { Alert, AlertDescription } from "./ui/alert";
-import { Skeleton } from "./ui/skeleton";
-import { Button } from "./ui/button";
+import { Alert, AlertDescription } from "../../../components/ui/alert";
+import { Skeleton } from "../../../components/ui/skeleton";
+import { Button } from "../../../components/ui/button";
 import { cn } from "@/lib/utils";
 
 const MessageContext = createContext<IMessage | undefined>(undefined);

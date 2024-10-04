@@ -14,8 +14,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import TooltipIconButton from "./buttons/tooltip-icon-button";
-import TextButton from "./buttons/text-button";
+import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
+import TextButton from "../../../components/buttons/text-button";
 import useHistory from "@/hooks/use-history";
 import useChat from "@/hooks/use-chat";
 

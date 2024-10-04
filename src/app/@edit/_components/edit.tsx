@@ -8,8 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import SheetEditor from "./sheet-editor/sheet-editor";
 import ImageEditor from "./image-editor";
-import SheetEditor from "./sheet-editor";
 
 export default function Edit() {
   const [editor, setEditor] = useState<"image-editor" | "tabular-editor">(

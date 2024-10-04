@@ -15,15 +15,15 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../../../components/ui/dropdown-menu";
 import attachmentSchema, {
   Attachment as IAttachment,
 } from "@/schemas/attachment.schema";
 import useAttachments from "@/hooks/use-attachments";
 import useEditFile from "@/hooks/use-edit-file";
-import IconButton from "./buttons/icon-button";
-import { Skeleton } from "./ui/skeleton";
-import { Button } from "./ui/button";
+import IconButton from "../../../components/buttons/icon-button";
+import { Skeleton } from "../../../components/ui/skeleton";
+import { Button } from "../../../components/ui/button";
 import { cn } from "@/lib/utils";
 
 const AttachmentContext = createContext<IAttachment | undefined>(undefined);

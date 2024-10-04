@@ -12,10 +12,10 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import TooltipIconButton from "./buttons/tooltip-icon-button";
+import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
 import objectIdSchema from "@/schemas/object-id.schema";
 import { Button } from "@/components/ui/button";
-import TextButton from "./buttons/text-button";
+import TextButton from "../../../components/buttons/text-button";
 import useChat from "@/hooks/use-chat";
 
 export default function ChatShare() {

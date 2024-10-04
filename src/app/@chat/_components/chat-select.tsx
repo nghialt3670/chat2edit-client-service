@@ -10,12 +10,12 @@ import {
   SelectItem,
   SelectLabel,
 } from "@/components/ui/select";
-import TooltipIconButton from "./buttons/tooltip-icon-button";
+import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
 import { ChatPreview } from "@/schemas/chat-preview.schema";
-import ButtonSelectTrigger from "./button-select-trigger";
+import ButtonSelectTrigger from "../../../components/buttons/button-select-trigger";
 import { cn, isEmptyObject } from "@/lib/utils";
 import useHistory from "@/hooks/use-history";
-import { ButtonProps } from "./ui/button";
+import { ButtonProps } from "../../../components/ui/button";
 import useChat from "@/hooks/use-chat";
 
 export default function ChatSelect({ className }: ButtonProps) {
