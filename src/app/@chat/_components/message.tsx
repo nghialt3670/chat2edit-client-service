@@ -7,8 +7,8 @@ import {
 import ReactMarkdown from "react-markdown";
 import { AlertTitle } from "@mui/material";
 import { AlertCircle } from "lucide-react";
-import { Message as IMessage } from "@/schemas/message.schema";
 import { Alert, AlertDescription } from "../../../components/ui/alert";
+import { Message as IMessage } from "@/schemas/message.schema";
 import { Skeleton } from "../../../components/ui/skeleton";
 import { Button } from "../../../components/ui/button";
 import { cn } from "@/lib/utils";
@@ -30,7 +30,9 @@ export default function Message({
 }: PropsWithChildren & { message: IMessage }) {
   return (
     <MessageContext.Provider value={message}>
-      {children}
+      <div className="space-y-2">
+        {children}
+      </div>
     </MessageContext.Provider>
   );
 }

@@ -19,11 +19,11 @@ import {
 import attachmentSchema, {
   Attachment as IAttachment,
 } from "@/schemas/attachment.schema";
-import useAttachments from "@/hooks/use-attachments";
-import useEditFile from "@/hooks/use-edit-file";
 import IconButton from "../../../components/buttons/icon-button";
 import { Skeleton } from "../../../components/ui/skeleton";
 import { Button } from "../../../components/ui/button";
+import useAttachments from "@/hooks/use-attachments";
+import useEditFile from "@/hooks/use-edit-file";
 import { cn } from "@/lib/utils";
 
 const AttachmentContext = createContext<IAttachment | undefined>(undefined);
@@ -156,12 +156,12 @@ Attachment.Options = function AttachmentOptions() {
         const response = await fetch(`/api/attachments/${id}/file`);
         if (!response.ok) throw new Error();
         const blob = await response.blob();
-        setEditFile(new File([blob], file.name, {type: file.contentType}))
+        setEditFile(new File([blob], file.name, { type: file.contentType }));
       } catch {
         toast("Failed to fetch file");
       }
     });
-  }
+  };
 
   const handleDownloadSelect = (e: Event) => {
     e.preventDefault();
@@ -201,7 +201,7 @@ Attachment.Options = function AttachmentOptions() {
   };
 
   const disableReply = uploadeds.map((att) => att.ref).includes(id);
-  const disableAll = isFetchingFile || isDownloading || isCreatingRef
+  const disableAll = isFetchingFile || isDownloading || isCreatingRef;
 
   return (
     <DropdownMenu>

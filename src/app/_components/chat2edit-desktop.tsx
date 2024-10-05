@@ -18,7 +18,7 @@ export default function ChatEditDesktop() {
       <ResizableHandle withHandle />
       <ResizablePanel
         id="editor-panel"
-        className="p-4"
+        className="pl-3 "
         defaultSize={60}
         minSize={30}
       >

@@ -1,7 +1,7 @@
 "use client";
 
-import { AlertCircle, Trash2 } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
+import { AlertCircle, Trash2 } from "lucide-react";
 import { CircularProgress } from "@mui/material";
 import { useRouter } from "next/navigation";
 import {
@@ -13,8 +13,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import TextButton from "../../../components/buttons/text-button";
 import useHistory from "@/hooks/use-history";
 import useChat from "@/hooks/use-chat";
@@ -48,7 +48,7 @@ export default function ChatDelete() {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <TooltipIconButton text="Delete chat" onClick={() => setOpen(true)}>
-        <Trash2 size={16} />
+        <Trash2 size={18} />
       </TooltipIconButton>
       <AlertDialogContent>
         <AlertDialogHeader>

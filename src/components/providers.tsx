@@ -3,8 +3,8 @@
 import { SessionProvider, SessionProviderProps } from "next-auth/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
-import { HistoryProvider } from "@/hooks/use-history";
 import { ChatPreview } from "@/schemas/chat-preview.schema";
+import { HistoryProvider } from "@/hooks/use-history";
 
 interface ProvidersProps
   extends Omit<SessionProviderProps, "children">,

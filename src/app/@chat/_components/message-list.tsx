@@ -17,21 +17,25 @@ export default function MessageList() {
   }, [status, messages]);
 
   return (
-    <ScrollArea className="relative size-full rounded-lg border min-w-80">
+    <ScrollArea className="relative size-full rounded-lg border min-w-80 bg-accent/20">
       {status === "initializing" && (
         <LinearProgress
           color={"inherit"}
           style={{ position: "absolute", top: 0, left: 0, right: 0 }}
         />
       )}
-      <ul ref={scrollRef} className="p-4 space-y-6">
+      <ul ref={scrollRef} className="p-4 space-y-10">
         {messages.map((msg) =>
           msg.type === "request" ? (
             <Message key={msg.id} message={msg}>
               <Message.Text className="bg-accent ml-auto" />
               <Message.Attachments>
                 {msg.attachments.map((att) => (
-                  <Attachment key={att.id} className="w-80 ml-auto" attachment={att}>
+                  <Attachment
+                    key={att.id}
+                    className="w-80 ml-auto"
+                    attachment={att}
+                  >
                     <Attachment.Options />
                   </Attachment>
                 ))}
@@ -39,10 +43,10 @@ export default function MessageList() {
             </Message>
           ) : (
             <Message key={msg.id} message={msg}>
-              <Message.Text />
+              <Message.Text className="p-0" />
               <Message.Attachments>
                 {msg.attachments.map((att) => (
-                  <Attachment key={att.id} attachment={att}>
+                  <Attachment key={att.id} className="w-80" attachment={att}>
                     <Attachment.Options />
                   </Attachment>
                 ))}

@@ -1,12 +1,12 @@
 "use client";
 
-import { Canvas as FabricCanvas, FabricImage, FabricObject } from "fabric";
-import { useEffect, useRef, useState } from "react";
-import { cn, readFileAsDataURL, readFileAsText } from "@/lib/utils";
+import { FabricImage } from "fabric";
+import { useEffect } from "react";
+import { readFileAsDataURL, readFileAsText } from "@/lib/utils";
 import useEditFile from "@/hooks/use-edit-file";
 import useCanvas from "@/hooks/use-canvas";
-import ScrollableCanvas from "./scrollable-canvas";
 import Toolbar from "./toolbar";
+import ZoomingCanvas from "./zooming-canvas";
 
 export default function ImageEditor() {
   const { editFile } = useEditFile();
@@ -59,7 +59,7 @@ export default function ImageEditor() {
   return (
     <div className="size-full flex flex-col space-y-4">
       <Toolbar />
-      <ScrollableCanvas />
+      <ZoomingCanvas />
     </div>
   );
 }

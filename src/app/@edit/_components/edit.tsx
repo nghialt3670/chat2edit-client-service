@@ -1,18 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import SheetEditor from "./sheet-editor/sheet-editor";
+import EditorSelect from "../editor-select";
 import ImageEditor from "./image-editor";
 
 export default function Edit() {
-  const [editor, setEditor] = useState<"image-editor" | "tabular-editor">(
+  const [editor, setEditor] = useState<"image-editor" | "sheet-editor">(
     "image-editor",
   );
 
@@ -20,7 +14,7 @@ export default function Edit() {
     switch (editor) {
       case "image-editor":
         return <ImageEditor />;
-      case "tabular-editor":
+      case "sheet-editor":
         return <SheetEditor />;
     }
   };
@@ -28,26 +22,7 @@ export default function Edit() {
   return (
     <div className="size-full flex flex-col space-y-4">
       {renderEditor()}
-      <div className="border border-transparent">
-        <Select
-          onValueChange={(editor) =>
-            setEditor(editor as "image-editor" | "tabular-editor")
-          }
-          defaultValue="image-editor"
-        >
-          <SelectTrigger className="max-w-40">
-            <SelectValue placeholder="Image editor" />
-          </SelectTrigger>
-          <SelectContent className="max-w-xl">
-            <SelectItem value="image-editor">
-              <span className="truncate">Image editor</span>
-            </SelectItem>
-            <SelectItem value="tabular-editor">
-              <span className="truncate">Tabular editor</span>
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <EditorSelect onSelect={setEditor} />
     </div>
   );
 }

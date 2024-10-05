@@ -4,17 +4,17 @@ import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { Send, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
-import messageSchema, { Message } from "@/schemas/message.schema";
 import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
+import messageSchema, { Message } from "@/schemas/message.schema";
 import { PROVIDER_TO_FILE_ACCEPT } from "@/config/provider";
 import attachmentSchema from "@/schemas/attachment.schema";
 import { MESSAGE_TEXT_MAX_LENGTH } from "@/config/message";
 import objectIdSchema from "@/schemas/object-id.schema";
 import useAttachments from "@/hooks/use-attachments";
+import useHistory from "@/hooks/use-history";
 import useChat from "@/hooks/use-chat";
 import Attachment from "./attachment";
 import { nanoid } from "nanoid";
-import useHistory from "@/hooks/use-history";
 
 export default function MessageForm() {
   const [text, setText] = useState<string>("");
@@ -61,13 +61,13 @@ export default function MessageForm() {
     event.preventDefault();
 
     let currChatId = chatId;
-    let currChatPreview = chats!.find((chat) => chat.id === currChatId)
+    let currChatPreview = chats!.find((chat) => chat.id === currChatId);
 
     if (!currChatId)
       try {
         setStatus("initializing");
         const headers = { "Content-Type": "application/json" };
-        const settings = { provider, language }
+        const settings = { provider, language };
         const body = JSON.stringify({ settings });
         const response = await fetch("/api/chats", {
           method: "POST",
@@ -86,11 +86,11 @@ export default function MessageForm() {
         currChatPreview = {
           id: currChatId,
           title: text,
-          settings, 
+          settings,
           createdAt: new Date(),
           updatedAt: new Date(),
-        }
-        addChat(currChatPreview)
+        };
+        addChat(currChatPreview);
 
         history.pushState({}, "", `/${currChatId}`);
       } catch {
@@ -110,7 +110,7 @@ export default function MessageForm() {
 
       if (!response.ok) throw new Error();
 
-      updateChat({...currChatPreview!, title: text})
+      updateChat({ ...currChatPreview!, title: text });
 
       const message: Message = {
         id: nanoid(),
@@ -132,7 +132,7 @@ export default function MessageForm() {
     try {
       setStatus("responding");
       const endpoint = `/api/messages/send?chatId=${currChatId}`;
-      const response = await fetch(endpoint, {method: "POST"});
+      const response = await fetch(endpoint, { method: "POST" });
 
       if (!response.ok) throw new Error();
 
@@ -140,7 +140,7 @@ export default function MessageForm() {
       const message = messageSchema.parse(payload);
       setMessages((prev) => [...prev, message]);
 
-      updateChat({...currChatPreview!, title: message.text});
+      updateChat({ ...currChatPreview!, title: message.text });
       setStatus("idling");
     } catch {
       setStatus("no-response");
@@ -170,7 +170,7 @@ export default function MessageForm() {
       )}
       <div className="flex flex-row justify-between">
         <TooltipIconButton
-          text="Upload attachments"
+          text="Attach"
           onClick={() => fileInputRef.current?.click()}
         >
           <Upload />
@@ -187,7 +187,7 @@ export default function MessageForm() {
           onChange={(e) => setText(e.target.value)}
         />
         <TooltipIconButton
-          text="Send message"
+          text="Send"
           type="submit"
           disabled={status !== "idling" || !text.trim()}
         >

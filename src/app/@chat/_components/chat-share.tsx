@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, Forward, Trash2 } from "lucide-react";
+import { AlertCircle, Share, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import {
   AlertDialog,
@@ -11,11 +11,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import TextButton from "../../../components/buttons/text-button";
 import objectIdSchema from "@/schemas/object-id.schema";
 import { Button } from "@/components/ui/button";
-import TextButton from "../../../components/buttons/text-button";
 import useChat from "@/hooks/use-chat";
 
 export default function ChatShare() {
@@ -71,7 +71,7 @@ export default function ChatShare() {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <TooltipIconButton text="Share chat" onClick={() => setOpen(true)}>
-        <Forward />
+        <Share size={18} />
       </TooltipIconButton>
       <AlertDialogContent className="flex flex-col">
         <AlertDialogHeader>

@@ -2,10 +2,10 @@
 
 import { Image, Sheet } from "lucide-react";
 import { ReactNode } from "react";
-import { Select, SelectContent, SelectItem } from "@/components/ui/select";
-import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
-import { Provider } from "@/schemas/chat-settings.schema";
 import ButtonSelectTrigger from "../../../components/buttons/button-select-trigger";
+import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
+import { Select, SelectContent, SelectItem } from "@/components/ui/select";
+import { Provider } from "@/schemas/chat-settings.schema";
 import { ButtonProps } from "@/components/ui/button";
 import { PROVIDER_TO_TASK } from "@/config/provider";
 import useChat from "@/hooks/use-chat";

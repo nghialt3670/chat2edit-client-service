@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Select, SelectContent, SelectItem } from "../../components/ui/select";
 import ButtonSelectTrigger from "../../components/buttons/button-select-trigger";
+import { Select, SelectContent, SelectItem } from "../../components/ui/select";
 import { ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

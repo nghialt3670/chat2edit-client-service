@@ -10,12 +10,12 @@ import {
   SelectItem,
   SelectLabel,
 } from "@/components/ui/select";
+import ButtonSelectTrigger from "../../../components/buttons/button-select-trigger";
 import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
 import { ChatPreview } from "@/schemas/chat-preview.schema";
-import ButtonSelectTrigger from "../../../components/buttons/button-select-trigger";
+import { ButtonProps } from "../../../components/ui/button";
 import { cn, isEmptyObject } from "@/lib/utils";
 import useHistory from "@/hooks/use-history";
-import { ButtonProps } from "../../../components/ui/button";
 import useChat from "@/hooks/use-chat";
 
 export default function ChatSelect({ className }: ButtonProps) {
@@ -56,7 +56,9 @@ export default function ChatSelect({ className }: ButtonProps) {
         </TooltipIconButton>
       </ButtonSelectTrigger>
       <SelectContent className="w-full">
-        {isEmptyObject(groupedChats) && <p className="opacity-50 m-2">No chat history</p>}
+        {isEmptyObject(groupedChats) && (
+          <p className="opacity-50 m-2">No chat history</p>
+        )}
         {!isEmptyObject(groupedChats) &&
           Object.keys(groupedChats).map((date) => (
             <SelectGroup key={date}>

@@ -1,10 +1,14 @@
 "use client";
 
-import { Select, SelectContent, SelectItem } from "../../../components/ui/select";
-import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
-import { Language } from "@/schemas/chat-settings.schema";
 import ButtonSelectTrigger from "../../../components/buttons/button-select-trigger";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+} from "../../../components/ui/select";
+import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
 import { ButtonProps } from "../../../components/ui/button";
+import { Language } from "@/schemas/chat-settings.schema";
 import useChat from "@/hooks/use-chat";
 
 export default function LanguageSelect({ className }: ButtonProps) {

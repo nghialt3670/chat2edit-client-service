@@ -4,9 +4,9 @@ import { z } from "zod";
 import chatPreviewResponseSchema, {
   ChatPreview,
 } from "@/schemas/chat-preview.schema";
+import Chat2Edit from "@/app/_components/chat2edit";
 import { Providers } from "@/components/providers";
 import { SlotsProvider } from "@/hooks/use-slots";
-import Chat2Edit from "@/app/_components/chat2edit";
 import AppBar from "@/app/_components/app-bar";
 import { auth } from "@/auth";
 import ENV from "@/lib/env";

@@ -1,5 +1,3 @@
 export default function SheetEditor() {
-  return (
-    <div>sheet-editor</div>
-  )
+  return <div>sheet-editor</div>;
 }

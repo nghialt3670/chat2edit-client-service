@@ -1,6 +1,6 @@
-import { Canvas } from "fabric";
 import { MutableRefObject } from "react";
 import { create } from "zustand";
+import { Canvas } from "fabric";
 
 interface CanvasStore {
   canvasRef: MutableRefObject<Canvas | undefined>;

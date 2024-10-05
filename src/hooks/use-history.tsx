@@ -32,8 +32,8 @@ export function HistoryProvider({
   useEffect(() => setLocalChats(chats), [chats]);
 
   const addChat = (newChat: ChatPreview) => {
-    setLocalChats(prev => prev ? [...prev, newChat] : prev)
-  }
+    setLocalChats((prev) => (prev ? [...prev, newChat] : prev));
+  };
 
   const updateChat = (updatedChat: ChatPreview) => {
     setLocalChats((prev) =>

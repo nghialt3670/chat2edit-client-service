@@ -1,4 +1,4 @@
-import { Upload } from "lucide-react";
+import { ImageUp, Upload } from "lucide-react";
 import { FabricImage } from "fabric";
 import { toast } from "sonner";
 import { useRef } from "react";
@@ -26,18 +26,14 @@ export default function ImageUpload() {
 
     const backgroundImage = await FabricImage.fromURL(dataURL.toString());
     backgroundImage.set("filename", file.name);
-    
+
+    const widthRatio = canvasRef.current.getWidth() / backgroundImage.getScaledWidth();
+    const heightRatio = canvasRef.current.getHeight() / backgroundImage.getScaledHeight();
+    const zoomRatio = Math.min(widthRatio, heightRatio)
+
+    canvasRef.current.setZoom(zoomRatio)
+
     canvasRef.current.backgroundImage = backgroundImage;
-
-    const canvasWidth = canvasRef.current.getWidth();
-    const backgroundWidth = backgroundImage.getScaledWidth();
-    const backgroundHeight = backgroundImage.getScaledHeight();
-
-    const zoomRatio = canvasWidth / backgroundWidth;
-    const fitHeight = zoomRatio * backgroundHeight;
-
-    canvasRef.current.setZoom(zoomRatio);
-    canvasRef.current.setHeight(fitHeight);
     canvasRef.current.renderAll();
   };
 
@@ -53,7 +49,7 @@ export default function ImageUpload() {
         ref={fileInputRef}
         hidden
       />
-      <Upload />
+      <ImageUp />
     </TooltipIconButton>
   );
 }
