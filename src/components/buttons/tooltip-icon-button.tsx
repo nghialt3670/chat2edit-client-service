@@ -23,7 +23,11 @@ export default function TooltipIconButton({
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger type="button" className="size-8 flex justify-center items-center hover:bg-accent disabled:hover:bg-transparent disabled:opacity-30 rounded-md" {...props}>
+        <TooltipTrigger
+          type="button"
+          className="size-8 flex justify-center items-center hover:bg-accent disabled:hover:bg-transparent disabled:opacity-30 rounded-md"
+          {...props}
+        >
           {children}
         </TooltipTrigger>
         <TooltipContent>

@@ -1,8 +1,8 @@
-import { ImageUp, Upload } from "lucide-react";
+import { ChangeEvent, useRef } from "react";
+import { ImageUp } from "lucide-react";
 import { FabricImage } from "fabric";
 import { toast } from "sonner";
-import { useRef } from "react";
-import TooltipIconButton from "../../../../components/buttons/tooltip-icon-button";
+import TooltipIconButton from "@/components/buttons/tooltip-icon-button";
 import { readFileAsDataURL } from "@/lib/utils";
 import useCanvas from "@/hooks/use-canvas";
 
@@ -10,9 +10,7 @@ export default function ImageUpload() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { canvasRef } = useCanvas();
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!canvasRef.current) return;
     if (!event.target.files) return;
 
@@ -27,11 +25,13 @@ export default function ImageUpload() {
     const backgroundImage = await FabricImage.fromURL(dataURL.toString());
     backgroundImage.set("filename", file.name);
 
-    const widthRatio = canvasRef.current.getWidth() / backgroundImage.getScaledWidth();
-    const heightRatio = canvasRef.current.getHeight() / backgroundImage.getScaledHeight();
-    const zoomRatio = Math.min(widthRatio, heightRatio)
+    const widthRatio =
+      canvasRef.current.getWidth() / backgroundImage.getScaledWidth();
+    const heightRatio =
+      canvasRef.current.getHeight() / backgroundImage.getScaledHeight();
+    const zoomRatio = Math.min(widthRatio, heightRatio);
 
-    canvasRef.current.setZoom(zoomRatio)
+    canvasRef.current.setZoom(zoomRatio);
 
     canvasRef.current.backgroundImage = backgroundImage;
     canvasRef.current.renderAll();
@@ -39,7 +39,7 @@ export default function ImageUpload() {
 
   return (
     <TooltipIconButton
-      text="Upload image"
+      text="Upload"
       onClick={() => fileInputRef.current?.click()}
     >
       <input

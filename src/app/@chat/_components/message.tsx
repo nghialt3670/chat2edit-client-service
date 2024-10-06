@@ -30,9 +30,7 @@ export default function Message({
 }: PropsWithChildren & { message: IMessage }) {
   return (
     <MessageContext.Provider value={message}>
-      <div className="space-y-2">
-        {children}
-      </div>
+      <div className="space-y-2">{children}</div>
     </MessageContext.Provider>
   );
 }

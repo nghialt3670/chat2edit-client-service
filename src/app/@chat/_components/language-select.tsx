@@ -1,11 +1,11 @@
 "use client";
 
-import ButtonSelectTrigger from "../../../components/buttons/button-select-trigger";
 import {
   Select,
   SelectContent,
   SelectItem,
 } from "../../../components/ui/select";
+import ButtonSelectTrigger from "../../../components/buttons/button-select-trigger";
 import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
 import { ButtonProps } from "../../../components/ui/button";
 import { Language } from "@/schemas/chat-settings.schema";

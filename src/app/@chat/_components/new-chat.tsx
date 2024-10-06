@@ -1,10 +1,10 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
+import { FabricImage, filters } from "fabric";
+import { useRef } from "react";
 import TextButton from "../../../components/buttons/text-button";
 import useChat from "@/hooks/use-chat";
-import { useRef } from "react";
-import { FabricImage, filters } from "fabric";
 
 export default function NewChat() {
   const { resetChat, setStatus, isNew } = useChat();
@@ -26,16 +26,15 @@ export default function NewChat() {
         // will remain if set
         if (!isNew) setStatus("initializing");
         router.push("/");
-        const image = await FabricImage.fromElement(ref.current!)
-        image?.filters.push(new filters.Grayscale())
-        image?.filters.push(new filters.Invert())
-        image?.filters.push(new filters.Brightness())
-        image?.filters.push(new filters.Blur())
-        image?.filters.push(new filters.Contrast())
-        image?.filters.push(new filters.Noise())
-        image?.filters.push(new filters.Pixelate())
-        console.log(image?.toObject())
-
+        const image = await FabricImage.fromElement(ref.current!);
+        image?.filters.push(new filters.Grayscale());
+        image?.filters.push(new filters.Invert());
+        image?.filters.push(new filters.Brightness());
+        image?.filters.push(new filters.Blur());
+        image?.filters.push(new filters.Contrast());
+        image?.filters.push(new filters.Noise());
+        image?.filters.push(new filters.Pixelate());
+        console.log(image?.toObject());
       }}
     >
       New chat

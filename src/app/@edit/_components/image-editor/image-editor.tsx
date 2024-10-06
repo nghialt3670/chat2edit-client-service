@@ -2,11 +2,12 @@
 
 import { FabricImage } from "fabric";
 import { useEffect } from "react";
+import { toast } from "sonner";
 import { readFileAsDataURL, readFileAsText } from "@/lib/utils";
 import useEditFile from "@/hooks/use-edit-file";
+import ZoomingCanvas from "./zooming-canvas";
 import useCanvas from "@/hooks/use-canvas";
 import Toolbar from "./toolbar";
-import ZoomingCanvas from "./zooming-canvas";
 
 export default function ImageEditor() {
   const { editFile } = useEditFile();
@@ -14,15 +15,9 @@ export default function ImageEditor() {
 
   useEffect(() => {
     const initFabricCanvas = async () => {
-      if (
-        !editFile ||
-        !canvasRef.current ||
-        (!editFile.type.startsWith("image/") &&
-          !editFile.name.endsWith(".fcanvas"))
-      ) {
-        setIsLoading(false);
-        return;
-      }
+      if (!editFile || !canvasRef.current) return;
+
+      canvasRef.current.setViewportTransform([1, 0, 0, 1, 0, 0]);
 
       if (editFile.type.startsWith("image/")) {
         const dataURL = await readFileAsDataURL(editFile);
@@ -34,25 +29,23 @@ export default function ImageEditor() {
         const json = await readFileAsText(editFile);
         if (json) await canvasRef.current.loadFromJSON(json);
       } else {
-        return;
+        toast("Failed to load image");
       }
 
       const backgroundImage = canvasRef.current.backgroundImage;
+
       if (backgroundImage) {
-        const canvasWidth = canvasRef.current.getWidth();
-        const backgroundWidth = backgroundImage.getScaledWidth();
-        const backgroundHeight = backgroundImage.getScaledHeight();
-        const zoomRatio = canvasWidth / backgroundWidth;
-        const fitHeight = zoomRatio * backgroundHeight;
+        const widthRatio =
+          canvasRef.current.getWidth() / backgroundImage.getScaledWidth();
+        const heightRatio =
+          canvasRef.current.getHeight() / backgroundImage.getScaledHeight();
+        const zoomRatio = Math.min(widthRatio, heightRatio);
         canvasRef.current.setZoom(zoomRatio);
-        canvasRef.current.setHeight(fitHeight);
       }
 
       canvasRef.current.renderAll();
-      setIsLoading(false);
     };
 
-    setIsLoading(true);
     initFabricCanvas();
   }, [editFile]);
 

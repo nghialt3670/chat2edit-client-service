@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
 import messageSchema, { Message } from "@/schemas/message.schema";
+import { SHOW_RESPONDING_MESSAGE_DELAY_MS } from "@/config/timer";
 import { PROVIDER_TO_FILE_ACCEPT } from "@/config/provider";
 import attachmentSchema from "@/schemas/attachment.schema";
 import { MESSAGE_TEXT_MAX_LENGTH } from "@/config/message";
@@ -15,7 +16,6 @@ import useHistory from "@/hooks/use-history";
 import useChat from "@/hooks/use-chat";
 import Attachment from "./attachment";
 import { nanoid } from "nanoid";
-import { SHOW_RESPONDING_MESSAGE_DELAY_MS } from "@/config/timer";
 
 export default function MessageForm() {
   const [text, setText] = useState<string>("");
@@ -131,7 +131,10 @@ export default function MessageForm() {
     }
 
     try {
-      setTimeout(() => setStatus("responding"), SHOW_RESPONDING_MESSAGE_DELAY_MS);
+      setTimeout(
+        () => setStatus("responding"),
+        SHOW_RESPONDING_MESSAGE_DELAY_MS,
+      );
       const endpoint = `/api/messages/send?chatId=${currChatId}`;
       const response = await fetch(endpoint, { method: "POST" });
 

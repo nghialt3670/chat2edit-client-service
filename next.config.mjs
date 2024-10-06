@@ -21,8 +21,8 @@ const nextConfig = {
         protocol: "https",
         hostname: "chat2edit.vercel.app",
         port: "",
-        pathname: "/api/attachments/**"
-      }
+        pathname: "/api/attachments/**",
+      },
     ],
   },
 };
