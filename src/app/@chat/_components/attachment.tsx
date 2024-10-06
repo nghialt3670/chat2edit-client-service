@@ -47,6 +47,7 @@ export function FileWithThumbnailAttachment() {
       width={file?.thumbnail?.width}
       height={file?.thumbnail?.height}
       alt=""
+      unoptimized
     />
   );
 }
