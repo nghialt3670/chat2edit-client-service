@@ -18,7 +18,7 @@ export default function ImageEditor() {
         !editFile ||
         !canvasRef.current ||
         (!editFile.type.startsWith("image/") &&
-          !editFile.name.endsWith(".canvas"))
+          !editFile.name.endsWith(".fcanvas"))
       ) {
         setIsLoading(false);
         return;
@@ -30,7 +30,7 @@ export default function ImageEditor() {
           canvasRef.current.backgroundImage = await FabricImage.fromURL(
             dataURL.toString(),
           );
-      } else if (editFile.name.endsWith(".canvas")) {
+      } else if (editFile.name.endsWith(".fcanvas")) {
         const json = await readFileAsText(editFile);
         if (json) await canvasRef.current.loadFromJSON(json);
       } else {

@@ -13,6 +13,8 @@ import NewChat from "./new-chat";
 export default function Chat() {
   const { chatId } = useChat();
 
+  
+
   return (
     <div className="size-full flex flex-col space-y-4">
       <div className="flex flex-row border-transparent">

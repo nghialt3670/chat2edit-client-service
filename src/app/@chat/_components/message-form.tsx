@@ -15,6 +15,7 @@ import useHistory from "@/hooks/use-history";
 import useChat from "@/hooks/use-chat";
 import Attachment from "./attachment";
 import { nanoid } from "nanoid";
+import { SHOW_RESPONDING_MESSAGE_DELAY_MS } from "@/config/timer";
 
 export default function MessageForm() {
   const [text, setText] = useState<string>("");
@@ -130,7 +131,7 @@ export default function MessageForm() {
     }
 
     try {
-      setStatus("responding");
+      setTimeout(() => setStatus("responding"), SHOW_RESPONDING_MESSAGE_DELAY_MS);
       const endpoint = `/api/messages/send?chatId=${currChatId}`;
       const response = await fetch(endpoint, { method: "POST" });
 

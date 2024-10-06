@@ -41,7 +41,7 @@ Message.Text = function MessageText({ className }: ComponentProps<"div">) {
   const message = useMessage();
 
   return (
-    <ReactMarkdown className={cn("w-fit rounded-md py-2 px-3", className)}>
+    <ReactMarkdown className={cn("w-fit rounded-lg py-2 px-3", className)}>
       {message.text}
     </ReactMarkdown>
   );
