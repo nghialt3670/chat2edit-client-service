@@ -1,8 +1,8 @@
 import ImageDownload from "./image-download";
-import ImageUpload from "./image-upload";
-import ImageFit from "./image-fit";
 import QueryBoxAdd from "./query-box-add";
+import ImageUpload from "./image-upload";
 import ImageAttach from "./image-attach";
+import ImageFit from "./image-fit";
 
 export default function Toolbar() {
   return (

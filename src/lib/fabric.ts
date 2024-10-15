@@ -3,7 +3,12 @@
 import { Canvas, FabricImage } from "fabric";
 import { readFileAsDataURL, readFileAsText } from "./utils";
 
-const FABRIC_ADDITIONAL_PROPS = ["filename", "lable_to_score", "inpained", "is_query"]
+const FABRIC_ADDITIONAL_PROPS = [
+  "filename",
+  "lable_to_score",
+  "inpained",
+  "is_query",
+];
 
 export async function initCanvasFromImage(file: File): Promise<Canvas> {
   const dataURL = await readFileAsDataURL(file);
@@ -31,7 +36,6 @@ export function saveCanvasToFile(canvas: Canvas): File {
   const file = new File([blob], filename, { type: 'application/json' });
   return file;
 }
-
 
 export function resizeCanvasToFit(canvas: Canvas): void {
   if (!canvas.backgroundImage) throw new Error("Missing background image");

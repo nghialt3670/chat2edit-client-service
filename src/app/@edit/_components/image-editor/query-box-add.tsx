@@ -1,7 +1,4 @@
-import {
-  SquareDashedMousePointer,
-  SquareMousePointer,
-} from "lucide-react";
+import { SquareDashedMousePointer, SquareMousePointer } from "lucide-react";
 import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import { Rect } from "fabric";
 import TooltipIconButton from "@/components/buttons/tooltip-icon-button";
@@ -28,7 +25,7 @@ export default function QueryBoxAdd() {
           stroke: "black",
           strokeWidth: 4,
           strokeUniform: true,
-          is_query: true
+          is_query: true,
         });
 
         boxRef.current = box;
@@ -48,6 +45,29 @@ export default function QueryBoxAdd() {
           if (y < boxRef.current.getY()) boxRef.current.setY(y);
 
           canvasRef.current.renderAll();
+        });
+
+        canvasRef.current.on('object:scaling', (event) => {
+          if (!canvasRef.current) return;
+          
+          const target = event.target;
+          
+          if (target.type === 'rect') {
+            // Get the new width and height by multiplying the original size by the scale factors
+            const newWidth = target.width * target.scaleX;
+            const newHeight = target.height * target.scaleY;
+            
+            // Set the new width and height
+            target.set({
+              width: newWidth,
+              height: newHeight,
+              scaleX: 1,  // Reset scaleX to 1
+              scaleY: 1   // Reset scaleY to 1
+            });
+            
+            // Redraw the canvas to reflect the changes
+            canvasRef.current.renderAll();
+          }
         });
       });
 
