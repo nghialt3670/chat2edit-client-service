@@ -1,7 +1,8 @@
 import ImageDownload from "./image-download";
 import ImageUpload from "./image-upload";
-import SelectorAdd from "./selector-add";
 import ImageFit from "./image-fit";
+import QueryBoxAdd from "./query-box-add";
+import ImageAttach from "./image-attach";
 
 export default function Toolbar() {
   return (
@@ -9,7 +10,8 @@ export default function Toolbar() {
       <ImageUpload />
       <ImageDownload />
       <ImageFit />
-      <SelectorAdd />
+      <QueryBoxAdd />
+      <ImageAttach />
     </div>
   );
 }

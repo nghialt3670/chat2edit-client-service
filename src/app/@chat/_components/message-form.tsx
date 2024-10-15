@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
-import { Send, Upload } from "lucide-react";
+import { Paperclip, Send, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import TooltipIconButton from "../../../components/buttons/tooltip-icon-button";
@@ -177,7 +177,7 @@ export default function MessageForm() {
           text="Attach"
           onClick={() => fileInputRef.current?.click()}
         >
-          <Upload />
+          <Paperclip />
         </TooltipIconButton>
         <input
           className="mx-2 bg-transparent outline-none w-[calc(100%-6rem)]"

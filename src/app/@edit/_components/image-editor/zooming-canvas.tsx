@@ -9,13 +9,17 @@ export default function ZoomingCanvas() {
   const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    canvasRef.current = new Canvas(canvasElementRef.current!);
+    if (!canvasElementRef.current) return;
+
+    canvasRef.current = new Canvas(canvasElementRef.current, {
+      uniformScaling: false,
+    });
     canvasRef.current.on("mouse:wheel", function (opt) {
       if (!canvasRef.current) return;
       var delta = opt.e.deltaY;
       var zoom = canvasRef.current.getZoom();
 
-      zoom *= 0.999 ** delta;
+      zoom = 0.999 * delta;
       if (zoom > 20) zoom = 20;
       if (zoom < 0.01) zoom = 0.01;
 
@@ -60,7 +64,7 @@ export default function ZoomingCanvas() {
   return (
     <div
       id="canvas-container"
-      className={"relative w-full h-full rounded-md border"}
+      className={"relative w-full h-full rounded-lg border"}
     >
       <canvas ref={canvasElementRef} />
     </div>
