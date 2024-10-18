@@ -7,6 +7,8 @@ import useCanvas from "@/hooks/use-canvas";
 export default function QueryBoxAdd() {
   const { canvasRef } = useCanvas();
   const [isActive, setIsActive] = useState<boolean>(false);
+  const boxOriginLeftRef = useRef<number | null>(null);
+  const boxOriginTopRef = useRef<number | null>(null)
   const boxRef = useRef<Rect | null>(null);
 
   useEffect(() => {
@@ -18,16 +20,24 @@ export default function QueryBoxAdd() {
         if (!canvasRef.current) return;
   
         // Get the pointer position adjusted for zoom and pan
-        const pointer = canvasRef.current.getPointer(opt.e);
+        const pointer = canvasRef.current.getScenePoint(opt.e);
         const x = pointer.x;
         const y = pointer.y;
+
+        boxOriginLeftRef.current = x
+        boxOriginTopRef.current = y
   
+        const backgroundImage = canvasRef.current.backgroundImage
+        const maxWidth = backgroundImage?.getScaledWidth() || canvasRef.current.getHeight()
+        const maxHeight = backgroundImage?.getScaledHeight() || canvasRef.current.getHeight()
+        const strokeWidth = Math.round(Math.min(maxWidth, maxHeight) / 100)
+
         const box = new Rect({
           left: x,
           top: y,
           fill: "transparent",
           stroke: "black",
-          strokeWidth: canvasRef.current.backgroundImage!.getScaledHeight() / 100,
+          strokeWidth,
           strokeUniform: true,  // Keep stroke size consistent during scaling
           is_query: true,
         });
@@ -38,20 +48,22 @@ export default function QueryBoxAdd() {
   
         // On mouse move, adjust the size of the rectangle
         canvasRef.current.on("mouse:move", (opt) => {
-          if (!canvasRef.current || !boxRef.current) return;
+          if (!canvasRef.current || !boxRef.current || !boxOriginLeftRef.current || !boxOriginTopRef.current) return;
   
-          const pointer = canvasRef.current.getPointer(opt.e);
+          const pointer = canvasRef.current.getScenePoint(opt.e);
           const x = pointer.x;
           const y = pointer.y;
   
           boxRef.current.set({
-            width: Math.abs(boxRef.current.left - x),
-            height: Math.abs(boxRef.current.top - y),
+            width: Math.abs(boxOriginLeftRef.current - x),
+            height: Math.abs(boxOriginTopRef.current - y),
           });
   
           // Adjust position if dragging towards top-left
-          if (x < boxRef.current.left) boxRef.current.set({ left: x });
-          if (y < boxRef.current.top) boxRef.current.set({ top: y });
+          if (x < boxOriginLeftRef.current) boxRef.current.set({ left: x })
+          else boxRef.current.set({ left: boxOriginLeftRef.current });
+          if (y < boxOriginTopRef.current) boxRef.current.set({ top: y })
+          else boxRef.current.set({ top: boxOriginTopRef.current})
   
           canvasRef.current.renderAll();
         });
