@@ -64,7 +64,7 @@ export default function ZoomingCanvas() {
   return (
     <div
       id="canvas-container"
-      className={"relative w-full h-full rounded-lg border"}
+      className={"relative w-full h-full rounded-lg border overflow-hidden"}
     >
       <canvas ref={canvasElementRef} />
     </div>
