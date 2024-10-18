@@ -130,8 +130,9 @@ export default function MessageForm() {
       setStatus("idling");
     }
 
+    let timeoutId;
     try {
-      setTimeout(
+      timeoutId = setTimeout(
         () => setStatus("responding"),
         SHOW_RESPONDING_MESSAGE_DELAY_MS,
       );
@@ -147,6 +148,7 @@ export default function MessageForm() {
       updateChat({ ...currChatPreview!, title: message.text });
       setStatus("idling");
     } catch {
+      clearTimeout(timeoutId);
       setStatus("no-response");
     }
   };
